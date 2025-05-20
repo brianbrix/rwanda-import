@@ -139,7 +139,7 @@ def construct_object_and_import(original_object:{}, all_categories, all_organiza
 
     fundings.append({
         "donor_organization_id":new_object['donor_organization'][0]['organization'],
-        "financing_instrument":extract_category(all_categories,'Financial Instrument',original_object['Financial Instrument']),
+        "financing_instrument":extract_category(all_categories,'Financing Instrument',original_object['Financing Instrument']),
         "type_of_assistance":extract_category(all_categories,'Type of Assistance',original_object['Type of Assistance']),
         "commitments":commitments,
         "disbursements":disbursements,
