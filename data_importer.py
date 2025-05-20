@@ -113,11 +113,11 @@ def get_data(excel_file: str, skip_rows: int, sheet_name:str):
     login()
     for item in result:
         print("Adding to api", item)
-        try:
-            construct_object_and_import(item, categories, all_orgs, all_currencies, all_adj_types, sectors, amp_role[0])
-        except Exception as e:
-            print("Error adding to api:", e)
-            break
+        # try:
+        construct_object_and_import(item, categories, all_orgs, all_currencies, all_adj_types, sectors, amp_role[0])
+        # except Exception as e:
+        #     print("Error adding to api:", e)
+        #     break
 
 def construct_object_and_import(original_object:{}, all_categories, all_organizations, all_currencies, all_adj_types, all_sectors, amp_role):
     new_object = {}
