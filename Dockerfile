@@ -9,4 +9,4 @@ RUN pip install --no-cache-dir --progress-bar off -r requirements.txt
 
 COPY . .
 
-CMD ["python", "importer.py"]
+CMD ["python", "data_importer.py"]
