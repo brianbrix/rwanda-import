@@ -7,7 +7,7 @@ from category_util import is_category, get_category_values, insert_categories, e
 from currency_utl import get_currencies
 from database_utils import run_sql_file_postgres
 from file_data_utils import clean_start_and_end_date, clean_up_title, extract_first_year_date, process_transaction
-from organizations_util import get_organizations
+from organizations_util import get_organizations, get_amp_role
 from sectors_util import get_sectors, add_sectors_to_db
 
 mapping_file='CFIS MAPPING.xlsx'
@@ -107,16 +107,17 @@ def get_data(excel_file: str, skip_rows: int, sheet_name:str):
     all_currencies = get_currencies()
     all_adj_types = get_adjustment_types()
     sectors =get_sectors()
+    amp_role = get_amp_role()
     login()
     for item in result:
         print("Adding to api", item)
         try:
-            construct_object_and_import(item, categories, all_orgs, all_currencies, all_adj_types, sectors)
+            construct_object_and_import(item, categories, all_orgs, all_currencies, all_adj_types, sectors, amp_role[0])
         except Exception as e:
             print("Error adding to api:", e)
             break
 
-def construct_object_and_import(original_object:{}, all_categories, all_organizations, all_currencies, all_adj_types, all_sectors):
+def construct_object_and_import(original_object:{}, all_categories, all_organizations, all_currencies, all_adj_types, all_sectors, amp_role):
     new_object = {}
     new_object["project_title"] = original_object['Project Title']
     new_object["is_draft"]=True
@@ -140,7 +141,8 @@ def construct_object_and_import(original_object:{}, all_categories, all_organiza
         "financing_instrument":extract_category(all_categories,'Financing Instrument',original_object['Financing Instrument']),
         "type_of_assistance":extract_category(all_categories,'Type of Assistance',original_object['Type of Assistance']),
         "commitments":commitments,
-        "disbursements":disbursements
+        "disbursements":disbursements,
+        "source_role":amp_role
     })
     new_object["fundings"]=fundings
     new_object["secondary_sectors"]=[

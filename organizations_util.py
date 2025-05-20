@@ -8,6 +8,7 @@ from psycopg2.extras import RealDictCursor
 
 from db_utls import get_db_connection
 
+from bokeh.layouts import row
 
 
 def extract_bracket_contents(text):
@@ -113,3 +114,12 @@ def get_organizations(raw_org_list):
     matches = process_organization_list(raw_org_list)
     return matches
 
+def get_amp_role():
+    conn= get_db_connection()
+    db_names = []
+    with conn.cursor(cursor_factory=RealDictCursor) as cur:
+        cur.execute("SELECT amp_role_id FROM amp_role where LOWER(name) =%s LIMIT 1",('donor',))
+        rows = cur.fetchall()
+        for row in rows:
+            db_names.append(row['amp_role_id'])
+    return db_names
