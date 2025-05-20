@@ -1,5 +1,6 @@
 DELETE from amp_sector_indicator;
-DELETE FROM amp_activity_sector;
+DELETE from amp_organisation_sector;
+DELETE from amp_activity_sector;
 DELETE from amp_sector CASCADE;
 
 INSERT INTO amp_sector_scheme (amp_sec_scheme_id, sec_scheme_code, sec_scheme_name, show_in_rm)
