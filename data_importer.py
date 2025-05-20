@@ -99,6 +99,7 @@ def get_data(excel_file: str, skip_rows: int, sheet_name:str):
     clean_start_and_end_date(result)
     result = clean_up_title(result)
     categories = get_category_values(list(mapping_dict.keys()))
+    print("categories", categories)
 
     all_orgs = get_organizations(agencies)
     # run_sql_file_postgres('insert_orgs.sql')
@@ -138,7 +139,7 @@ def construct_object_and_import(original_object:{}, all_categories, all_organiza
 
     fundings.append({
         "donor_organization_id":new_object['donor_organization'][0]['organization'],
-        "financing_instrument":extract_category(all_categories,'Financing Instrument',original_object['Financing Instrument']),
+        "financing_instrument":extract_category(all_categories,'Financial Instrument',original_object['Financial Instrument']),
         "type_of_assistance":extract_category(all_categories,'Type of Assistance',original_object['Type of Assistance']),
         "commitments":commitments,
         "disbursements":disbursements,
