@@ -8,4 +8,9 @@ services:
     volumes:
       - .:/app
     command: python data_importer.py
+    networks:
+      - pr-4394_rwanda_default
+networks:
+  pr-4394_rwanda_default:
+    driver: bridge
 
