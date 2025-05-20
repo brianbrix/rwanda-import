@@ -24,8 +24,7 @@ INSERT INTO amp_org_group (amp_org_grp_id, org_grp_name, org_grp_code, org_type)
                                                                                      (nextval('AMP_ORG_GROUP_seq'), 'NGOs & Civil Society', 'NGOS', (SELECT amp_org_type_id FROM amp_org_type WHERE org_type = 'Multilateral' LIMIT 1)),
                                                                                      (nextval('AMP_ORG_GROUP_seq'), 'Private Sector & Companies', 'PVT', (SELECT amp_org_type_id FROM amp_org_type WHERE org_type = 'Private Sector' LIMIT 1)),
                                                                                      (nextval('AMP_ORG_GROUP_seq'), 'Districts & Local Governments', 'DCTS', (SELECT amp_org_type_id FROM amp_org_type WHERE org_type = 'Government of Rwanda' LIMIT 1)),
-                                                                                     (nextval('AMP_ORG_GROUP_seq'), 'Other Organizations', 'OTHER', (SELECT amp_org_type_id FROM amp_org_type WHERE org_type = 'Other Organizations' LIMIT 1))
-ON CONFLICT (org_grp_name) DO NOTHING;
+                                                                                     (nextval('AMP_ORG_GROUP_seq'), 'Other Organizations', 'OTHER', (SELECT amp_org_type_id FROM amp_org_type WHERE org_type = 'Other Organizations' LIMIT 1));
 
 -- Insert GoR orgs
 INSERT INTO amp_organisation (amp_org_id, name, org_code, org_grp_id)
