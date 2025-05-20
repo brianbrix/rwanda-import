@@ -120,6 +120,7 @@ def get_data(excel_file: str, skip_rows: int, sheet_name:str):
         #     break
 def get_organization(all_orgs, key_name):
     all_keys=list(all_orgs.keys())
+    print(all_orgs)
     if key_name in all_keys:
         return all_orgs[key_name]
     else:
