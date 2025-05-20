@@ -11,7 +11,6 @@ def get_db_connection():
         _connection = psycopg2.connect(
             dbname=os.getenv("POSTGRES_DB", "amp"),
             user=os.getenv("POSTGRES_USER", "amp"),
-            password=os.getenv("POSTGRES_PASSWORD", "amp"),
             host=os.getenv("POSTGRES_HOST", "amp-rwanda-pr-4394.stg.ampsite.net-db"),  # since you're on the host
             port=os.getenv("POSTGRES_PORT", 5432),
             cursor_factory=RealDictCursor
