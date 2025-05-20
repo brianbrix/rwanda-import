@@ -124,7 +124,11 @@ def get_organization(all_orgs, key_name):
     if key_name in all_keys:
         return all_orgs[key_name]
     else:
-        return next(iter(all_orgs.values()))
+        print("Key not found: ",key_name)
+        print("Available keys: ", all_keys)
+        org=next(iter(all_orgs.values()))
+        print("Orgs", org)
+        return org
 def construct_object_and_import(original_object:{}, all_categories, all_organizations, all_currencies, all_adj_types, all_sectors, amp_role):
     new_object = {}
     donors =get_organization(all_organizations,original_object['Donor Agency'])
