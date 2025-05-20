@@ -4,6 +4,7 @@ import requests
 auth_cookie = None
 
 def login_to_backend(login_url, username, password, workspace_id):
+    global auth_cookie
     """
     Logs in to the backend and extracts the JSESSIONID cookie.
     """
@@ -18,22 +19,8 @@ def login_to_backend(login_url, username, password, workspace_id):
 
     if response.status_code == 200:
         print("Login successful.")
-
-        # Try to extract JSESSIONID (or the main auth cookie)
-        cookie_jar = session.cookies.get_dict()
-        if not cookie_jar:
-            raise Exception("Login succeeded but no cookies were returned.")
-
-        # You can inspect cookie_jar if needed
-        print("Cookies received:", cookie_jar)
-
-        # For example, if it uses JSESSIONID
-        if 'JSESSIONID' in cookie_jar:
-            return f"JSESSIONID={cookie_jar['JSESSIONID']}"
-        else:
-            # Use the first cookie as fallback
-            name, value = next(iter(cookie_jar.items()))
-            return f"{name}={value}"
+        auth_cookie = response.headers.get('Set-Cookie')
+        return auth_cookie
     else:
         raise Exception(f"Login failed with status code {response.status_code}: {response.text}")
 
@@ -43,16 +30,16 @@ def login():
     Initializes the global auth_cookie.
     """
     global auth_cookie
-    if auth_cookie is None:
-        login_url = 'https://amp-rwanda-pr-4394.stg.ampsite.net/rest/security/user'
-        username = 'atl@amp.org'
-        password = ''
-        workspace_id = 67
+    login_url = 'https://amp-rwanda-pr-4394.stg.ampsite.net/rest/security/user'
+    username = 'atl@amp.org'
+    password = ''
+    workspace_id = 67
 
-        auth_cookie = login_to_backend(login_url, username, password, workspace_id)
+    login_to_backend(login_url, username, password, workspace_id)
 
 
 def post_with_cookie(post_url, data, headers=None):
+    global auth_cookie
     """
     Makes a POST request using the auth cookie set in the 'Cookie' header.
     """
