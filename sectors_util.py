@@ -1,7 +1,7 @@
 from psycopg2.extras import RealDictCursor
 
 from database_utils import run_sql_file_postgres
-from db import get_db_connection
+from db_utls import get_db_connection
 
 
 def get_sectors():

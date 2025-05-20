@@ -7,5 +7,5 @@ services:
     container_name: amp-importer
     volumes:
       - .:/app
-    command: python importer.py
+    command: python data_importer.py
 

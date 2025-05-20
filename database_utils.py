@@ -1,6 +1,6 @@
 from psycopg2.extras import RealDictCursor
 
-from db import get_db_connection
+from db_utls import get_db_connection
 
 
 
