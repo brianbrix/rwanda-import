@@ -120,19 +120,23 @@ def get_data(excel_file: str, skip_rows: int, sheet_name:str):
         #     break
 def get_organization(all_orgs, key_name):
     all_keys=list(all_orgs.keys())
-    print(all_orgs)
+    # print(all_orgs)
     if key_name in all_keys:
         return all_orgs[key_name]
     else:
         return next(iter(all_orgs.values()))
 def construct_object_and_import(original_object:{}, all_categories, all_organizations, all_currencies, all_adj_types, all_sectors, amp_role):
     new_object = {}
+    donors =get_organization(all_organizations,original_object['Donor Agency'])
+    implementers =get_organization(all_organizations,original_object['Implementing agency'])
+    print("Donors", donors)
+    print("Implementers", implementers)
     new_object["project_title"] = original_object['Project Title']
     new_object["is_draft"]=True
     new_object["actual_start_date"]= original_object['Actual start date']
     new_object["actual_completion_date"]= original_object['Actual end date']
-    new_object["donor_organization"]=get_organization(all_organizations,original_object['Donor Agency'])
-    new_object["responsible_organization"]=get_organization(all_organizations,original_object['Implementing agency'])
+    new_object["donor_organization"]=donors
+    new_object["responsible_organization"]=implementers
     new_object["a_c_chapter"] = extract_category(all_categories,'A.C. Chapter',original_object['A.C. Chapter'])
     new_object["activity_status"]= extract_category(all_categories,'Activity status', original_object['Activity status'])
     new_object["procurement_system"]= extract_category(all_categories, 'Procurement System', original_object['Procurement System'])
