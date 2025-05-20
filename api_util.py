@@ -5,7 +5,7 @@ auth_cookie = None
 
 def login_to_backend(login_url, username, password, workspace_id):
     """
-    Logs in to the backend and extracts the authentication cookie.
+    Logs in to the backend and extracts the JSESSIONID cookie.
     """
     payload = {
         'username': username,
@@ -13,15 +13,27 @@ def login_to_backend(login_url, username, password, workspace_id):
         'workspaceId': workspace_id
     }
 
-    response = requests.post(login_url, json=payload)
+    session = requests.Session()
+    response = session.post(login_url, json=payload)
 
     if response.status_code == 200:
         print("Login successful.")
-        # Extract the 'Set-Cookie' header
-        cookie = response.headers.get('Set-Cookie')
-        if not cookie:
-            raise Exception("Login response did not include a Set-Cookie header.")
-        return cookie
+
+        # Try to extract JSESSIONID (or the main auth cookie)
+        cookie_jar = session.cookies.get_dict()
+        if not cookie_jar:
+            raise Exception("Login succeeded but no cookies were returned.")
+
+        # You can inspect cookie_jar if needed
+        print("Cookies received:", cookie_jar)
+
+        # For example, if it uses JSESSIONID
+        if 'JSESSIONID' in cookie_jar:
+            return f"JSESSIONID={cookie_jar['JSESSIONID']}"
+        else:
+            # Use the first cookie as fallback
+            name, value = next(iter(cookie_jar.items()))
+            return f"{name}={value}"
     else:
         raise Exception(f"Login failed with status code {response.status_code}: {response.text}")
 
