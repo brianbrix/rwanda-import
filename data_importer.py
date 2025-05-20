@@ -101,9 +101,9 @@ def get_data(excel_file: str, skip_rows: int, sheet_name:str):
     categories = get_category_values(list(mapping_dict.keys()))
 
     all_orgs = get_organizations(agencies)
-    run_sql_file_postgres('insert_orgs.sql')
-    add_sectors_to_db(sectors)
-    insert_categories(file_categories)
+    # run_sql_file_postgres('insert_orgs.sql')
+    # add_sectors_to_db(sectors)
+    # insert_categories(file_categories)
     all_currencies = get_currencies()
     all_adj_types = get_adjustment_types()
     sectors =get_sectors()
