@@ -123,7 +123,7 @@ def get_organization(all_orgs, key_name):
     if key_name in all_keys:
         return all_orgs[key_name]
     else:
-        return all_orgs[all_keys[10]]
+        return next(iter(all_orgs.values()))
 def construct_object_and_import(original_object:{}, all_categories, all_organizations, all_currencies, all_adj_types, all_sectors, amp_role):
     new_object = {}
     new_object["project_title"] = original_object['Project Title']
