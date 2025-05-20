@@ -19,7 +19,7 @@ COPY . /app
 # Create a virtual environment to manage dependencies
 RUN python -m venv /venv
 # Make sure pip and setuptools are up to date.
-RUN /venv/bin/pip install --upgrade pip setuptools
+RUN /venv/bin/pip install --upgrade --progress-bar off pip setuptools
 
 # Install Python dependencies from requirements.txt
 COPY requirements.txt /app/requirements.txt
