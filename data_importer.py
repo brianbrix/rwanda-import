@@ -140,7 +140,7 @@ def construct_object_and_import(original_object:{}, all_categories, all_organiza
     disbursements=[]
     create_transaction('Commitment', commitments, original_object, all_currencies, all_adj_types)
     create_transaction('Disbursement', disbursements, original_object, all_currencies, all_adj_types)
-
+    print(new_object)
 
 
     fundings.append({
