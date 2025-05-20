@@ -152,7 +152,6 @@ def construct_object_and_import(original_object:{}, all_categories, all_organiza
             "sector":all_sectors[original_object['Secondary sector']]
         }
     ]
-    print(new_object)
     import_project(json.dumps(new_object))
     return new_object
 
