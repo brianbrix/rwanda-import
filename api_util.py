@@ -45,22 +45,24 @@ def post_with_cookie(post_url, data, headers=None):
     """
     if auth_cookie is None:
         raise Exception("Auth cookie not initialized. Call login() first.")
-
-    default_headers = {
-        'Content-type': 'application/json',
-        'Cookie': auth_cookie
-    }
-    print("Headers", default_headers)
-
-    if headers:
-        default_headers.update(headers)
-
-    response = requests.post(post_url, data=data, headers=default_headers)
-
-    if response.status_code == 200:
-        return response.json()
+    if auth_cookie is None:
+        raise Exception("Auth cookie not initialized. Call login() first.")
     else:
-        raise Exception(f"POST request failed: {response.status_code} - {response.text}")
+        default_headers = {
+            'Content-type': 'application/json',
+            'Cookie': auth_cookie.split(';')[0]
+        }
+        print("Headers", default_headers)
+
+        if headers:
+            default_headers.update(headers)
+
+        response = requests.post(post_url, data=data, headers=default_headers)
+
+        if response.status_code == 200:
+            return response.json()
+        else:
+            raise Exception(f"POST request failed: {response.status_code} - {response.text}")
 
 
 def import_project(json_data):
