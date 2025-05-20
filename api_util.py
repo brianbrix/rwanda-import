@@ -1,3 +1,5 @@
+from http import HTTPStatus
+
 import requests
 
 # Global variable to hold the session cookie
@@ -59,9 +61,10 @@ def post_with_cookie(post_url, data, headers=None):
 
         response = requests.post(post_url, data=data, headers=default_headers)
 
-        if response.status_code == 200:
+        if response.status_code == HTTPStatus.OK or response.status_code == HTTPStatus.CREATED:
             return response.json()
         else:
+
             raise Exception(f"POST request failed: {response.status_code} - {response.text}")
 
 

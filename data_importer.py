@@ -98,13 +98,14 @@ def get_data(excel_file: str, skip_rows: int, sheet_name:str):
             result.append(row_result)
     clean_start_and_end_date(result)
     result = clean_up_title(result)
-    categories = get_category_values(list(mapping_dict.keys()))
-    print("categories", categories)
+    # print("categories", categories)
 
     all_orgs = get_organizations(agencies)
     # run_sql_file_postgres('insert_orgs.sql')
     # add_sectors_to_db(sectors)
-    insert_categories(file_categories)
+    # insert_categories(file_categories)
+    categories = get_category_values(list(mapping_dict.keys()))
+
     all_currencies = get_currencies()
     all_adj_types = get_adjustment_types()
     sectors =get_sectors()
@@ -123,7 +124,7 @@ def construct_object_and_import(original_object:{}, all_categories, all_organiza
     new_object["project_title"] = original_object['Project Title']
     new_object["is_draft"]=True
     new_object["actual_start_date"]= original_object['Actual start date']
-    new_object["actual_end_date"]= original_object['Actual end date']
+    new_object["actual_completion_date"]= original_object['Actual end date']
     new_object["donor_organization"]=all_organizations[original_object['Donor Agency']]
     new_object["responsible_organization"]=all_organizations[original_object['Implementing agency']]
     new_object["a_c_chapter"] = extract_category(all_categories,'A.C. Chapter',original_object['A.C. Chapter'])
