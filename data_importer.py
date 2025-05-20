@@ -55,7 +55,7 @@ def get_data(excel_file: str, skip_rows: int, sheet_name:str):
 
     # result_dict = dict(zip(column_a, column_b))
 
-    print(mapping_dict)
+    # print(mapping_dict)
     # print(columns)
 
     result = []
