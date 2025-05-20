@@ -8,7 +8,6 @@ from psycopg2.extras import RealDictCursor
 
 from db_utls import get_db_connection
 
-from bokeh.layouts import row
 
 
 def extract_bracket_contents(text):
