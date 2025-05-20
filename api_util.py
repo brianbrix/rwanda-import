@@ -70,6 +70,6 @@ def import_project(json_data):
     Imports a project using the provided JSON data.
     """
     print(json_data)
-    post_url = 'https://amp-rwanda-develop.stg.ampsite.net/rest/activity?can-downgrade-to-draft=true'
+    post_url = 'https://amp-rwanda-pr-4394.stg.ampsite.net/rest/activity?can-downgrade-to-draft=true'
     response = post_with_cookie(post_url, json_data)
     print(response)
