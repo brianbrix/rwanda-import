@@ -122,7 +122,10 @@ def get_organization(all_orgs, key_name):
     all_keys=list(all_orgs.keys())
     # print(all_orgs)
     if key_name in all_keys:
-        return all_orgs[key_name]
+        org = all_orgs[key_name]
+        if len(org)<1:
+            org=next(iter(all_orgs.values()))
+        return org
     else:
         print("Key not found: ",key_name)
         print("Available keys: ", all_keys)
