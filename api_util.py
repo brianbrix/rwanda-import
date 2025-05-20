@@ -50,6 +50,7 @@ def post_with_cookie(post_url, data, headers=None):
         'Content-type': 'application/json',
         'Cookie': auth_cookie
     }
+    print("Headers", default_headers)
 
     if headers:
         default_headers.update(headers)
