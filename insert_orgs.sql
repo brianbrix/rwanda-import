@@ -10,7 +10,7 @@ DELETE FROM amp_org_type;
 
 --Insert  org types
     INSERT INTO amp_org_type(amp_org_type_id,org_type,org_type_code,org_type_is_governmental,org_type_classification) VALUES
-                                                                                                                              (nextval('AMP_ORG_TYPE_seq'),'Multirateral','MUL',false,'INTERNATIONAL'),
+                                                                                                                              (nextval('AMP_ORG_TYPE_seq'),'Multilateral','MUL',false,'INTERNATIONAL'),
                                                                                                                               (nextval('AMP_ORG_TYPE_seq'),'Bilateral','BIL',false,'INTERNATIONAL'),
                                                                                                                               (nextval('AMP_ORG_TYPE_seq'),'Government of Rwanda(GoR)', 'PAD',true,'GOVERNMENTAL'),
                                                                                                                               (nextval('AMP_ORG_TYPE_seq'), 'Private Sector', 'PVT', false, null),
@@ -20,11 +20,11 @@ DELETE FROM amp_org_type;
 
 -- Insert org groups
 INSERT INTO amp_org_group (amp_org_grp_id, org_grp_name, org_grp_code, org_type) VALUES
-                                                                                     (nextval('AMP_ORG_GROUP_seq'), 'Government of Rwanda (GoR) & Ministries', 'GOR', (SELECT amp_org_type_id FROM amp_org_type WHERE org_type = 'Government of Rwanda' LIMIT 1)),
+                                                                                     (nextval('AMP_ORG_GROUP_seq'), 'Government of Rwanda (GoR) & Ministries', 'GOR', (SELECT amp_org_type_id FROM amp_org_type WHERE org_type = 'Government of Rwanda(GoR)' LIMIT 1)),
                                                                                      (nextval('AMP_ORG_GROUP_seq'), 'International Organizations & Donors', 'INT', (SELECT amp_org_type_id FROM amp_org_type WHERE org_type = 'Multilateral' LIMIT 1)),
-                                                                                     (nextval('AMP_ORG_GROUP_seq'), 'NGOs & Civil Society', 'NGOS', (SELECT amp_org_type_id FROM amp_org_type WHERE org_type = 'Multilateral' LIMIT 1)),
+                                                                                     (nextval('AMP_ORG_GROUP_seq'), 'NGOs & Civil Society', 'NGOS', (SELECT amp_org_type_id FROM amp_org_type WHERE org_type = 'Bilateral' LIMIT 1)),
                                                                                      (nextval('AMP_ORG_GROUP_seq'), 'Private Sector & Companies', 'PVT', (SELECT amp_org_type_id FROM amp_org_type WHERE org_type = 'Private Sector' LIMIT 1)),
-                                                                                     (nextval('AMP_ORG_GROUP_seq'), 'Districts & Local Governments', 'DCTS', (SELECT amp_org_type_id FROM amp_org_type WHERE org_type = 'Government of Rwanda' LIMIT 1)),
+                                                                                     (nextval('AMP_ORG_GROUP_seq'), 'Districts & Local Governments', 'DCTS', (SELECT amp_org_type_id FROM amp_org_type WHERE org_type = 'Government of Rwanda(GoR)' LIMIT 1)),
                                                                                      (nextval('AMP_ORG_GROUP_seq'), 'Other Organizations', 'OTHER', (SELECT amp_org_type_id FROM amp_org_type WHERE org_type = 'Other Organizations' LIMIT 1));
 
 -- Insert GoR orgs
