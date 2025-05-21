@@ -29,11 +29,11 @@ def get_category_values(fields_list):
 def extract_category(all_categories:{},field_name:str,category_value:str):
 
     if field_name not in all_categories:
-        return None
+        return next(iter(all_categories[field_name]))["id"]
     for category in all_categories[field_name]:
         if category["value"] == category_value:
             return category["id"]
-    return None
+    return next(iter(all_categories[field_name]))["id"]
 
 def is_category(name:str):
     conn = get_db_connection()

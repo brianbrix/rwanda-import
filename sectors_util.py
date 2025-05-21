@@ -15,7 +15,6 @@ def get_sectors():
         rows = cur.fetchall()
         for row in rows:
             results[row['name']] = row['amp_sector_id']
-    print(results)
     return results
 
 def add_sectors_to_db(sector_names: []):
@@ -34,3 +33,4 @@ def add_sectors_to_db(sector_names: []):
         for name in sector_names:
             cur.execute(query, (name, name))  # pass `name` twice for %s
         conn.commit()
+    print("Added sectors to database")

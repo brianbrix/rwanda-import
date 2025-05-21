@@ -45,6 +45,21 @@ def clean_start_and_end_date(data_list: [{}]):
                     data.pop(key, None)  # Remove if parsing fails
             else:
                 data.pop(key, None)  # Remove if no match found
+def clean_up_orgs(data_list:[{}]):
+    clean_data=[]
+    for idx,data in enumerate(data_list):
+        donor = data.get('Donor Agency')
+        if donor is None:
+            continue
+        donor = donor.strip()
+        if len(donor)>0:
+            if data.get('Type of Assistance') is None or len(data.get('Type of Assistance'))<1:
+                data['Type of Assistance']='Grant'
+            if data.get('Financing Instrument') is None or len(data.get('Financing Instrument'))<1:
+                data['Financing Instrument']='Project'
+        clean_data.append(data)
+    return clean_data
+
 
 def clean_up_title(data_list:[{}]):
     """
