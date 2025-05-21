@@ -1,6 +1,7 @@
 import json
 
 import pandas as pd
+from numpy.ma.core import empty
 
 from api_util import login, import_project
 from category_util import is_category, get_category_values, insert_categories, extract_category, get_adjustment_types
@@ -69,17 +70,21 @@ def get_data(excel_file: str, skip_rows: int, sheet_name: str):
     groups = []
     sectors = []
     file_categories = {amp_title: set() for amp_title in list(mapping_dict.keys())}
-    print("Number of rows in file: ",df2.size)
+    data_dict_list=df2.to_numpy()
+    print("Number of rows in file: ",len(data_dict_list))
 
     # Go through each list element and its index
-    for row in df2.to_numpy():
+    invalid_rows = 0
+    for row in data_dict_list:
         row_result = {}
         for idx, column in enumerate(columns):
             for amp_title, ndc_title in mapping_dict.items():
                 # file_categories[amp_title]=[]
                 if amp_title is None or column is None:
+                    invalid_rows+=1
                     continue
                 if not isinstance(column, str):
+                    invalid_rows+=1
                     continue
                 #map for commitments and disbursements
                 if amp_title.lower() in ['commitment', 'disbursement']:
@@ -102,9 +107,13 @@ def get_data(excel_file: str, skip_rows: int, sheet_name: str):
                                 file_categories[amp_title].add(col_value)
         if row_result:  # Only add non-empty rows
             result.append(row_result)
+    print("Number of invalid rows: ", invalid_rows)
+    print("Number of valid rows initially: ", len(result))
     clean_start_and_end_date(result)
     result = clean_up_title(result)
+    print("Number of valid rows after title cleanup: ", len(result))
     result = clean_up_orgs(result)
+    print("Number of valid rows after orgs cleanup: ", len(result))
     # print("categories", categories)
 
     all_orgs = get_organizations(agencies)
@@ -119,10 +128,10 @@ def get_data(excel_file: str, skip_rows: int, sheet_name: str):
     login()
     for idx,item in enumerate(result):
         print("Adding to api: ",idx+1, item)
-        # try:
+    #     # try:
         construct_object_and_import(item, categories, all_orgs, all_currencies, all_adj_types, sectors, amp_role[0])
-        # except Exception as e:
-        #     print("Error adding to api:", e)
+    #     # except Exception as e:
+    #     #     print("Error adding to api:", e)
         #     break
 
 
