@@ -107,9 +107,9 @@ def get_data(excel_file: str, skip_rows: int, sheet_name: str):
     # print("categories", categories)
 
     all_orgs = get_organizations(agencies)
-    # run_sql_file_postgres('insert_orgs.sql')
+    run_sql_file_postgres('insert_orgs.sql')
     add_sectors_to_db(sectors)
-    # insert_categories(file_categories)
+    insert_categories(file_categories)
     categories = get_category_values(list(mapping_dict.keys()))
     all_currencies = get_currencies()
     all_adj_types = get_adjustment_types()
@@ -139,6 +139,7 @@ def get_organization(all_orgs, key_name):
 
 def construct_object_and_import(original_object: {}, all_categories, all_organizations, all_currencies, all_adj_types,
                                 all_sectors, amp_role):
+    # print(original_object)
     new_object = {}
     original_keys_list = list(original_object.keys())
     donors = get_organization(all_organizations, original_object['Donor Agency'])
@@ -164,7 +165,8 @@ def construct_object_and_import(original_object: {}, all_categories, all_organiz
     if 'Commitment' in original_keys_list or 'Disbursement' in original_keys_list:
         create_transaction('Commitment', commitments, original_object, all_currencies, all_adj_types)
         create_transaction('Disbursement', disbursements, original_object, all_currencies, all_adj_types)
-
+        # print("Commitments",commitments)
+        # print("Disbursements", disbursements)
         transaction_object={
             "donor_organization_id": new_object['donor_organization'][0]['organization'],
             "financing_instrument": extract_category(all_categories, 'Financing Instrument',
@@ -181,6 +183,7 @@ def construct_object_and_import(original_object: {}, all_categories, all_organiz
             transaction_object.update({
                 "disbursements": disbursements
             })
+        fundings.append(transaction_object)
 
         new_object["fundings"] = fundings
     if 'Secondary sector' in original_keys_list:
@@ -189,6 +192,7 @@ def construct_object_and_import(original_object: {}, all_categories, all_organiz
                 "sector": all_sectors[original_object['Secondary sector']]
             }
         ]
+    # print(new_object)
 
     import_project(json.dumps(new_object))
     return new_object
