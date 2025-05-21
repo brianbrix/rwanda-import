@@ -1,5 +1,6 @@
 -- These should be run one time to clean organizations
 DELETE FROM amp_user_ext;
+DELETE FROM amp_org_role;
 DELETE FROM cr_documents_to_organisations;
 DELETE FROM amp_org_contact;
 DELETE FROM amp_organisation_sector;
