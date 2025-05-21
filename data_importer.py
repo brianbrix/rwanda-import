@@ -155,7 +155,7 @@ def construct_object_and_import(original_object: {}, all_categories, all_organiz
     donors = get_organization(all_organizations, original_object['Donor Agency'])
     implementers = get_organization(all_organizations, original_object['Implementing agency'])
     new_object["project_title"] = original_object['Project Title']
-    new_object["is_draft"] = True
+    new_object["is_draft"] = False
     new_object["activity_status"] = extract_category(all_categories, 'Activity status',
                                                      original_object['Activity status'])
     if 'Actual start date' in original_keys_list:

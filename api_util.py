@@ -35,7 +35,7 @@ def login():
     login_url = 'https://amp-rwanda-pr-4394.stg.ampsite.net/rest/security/user'
     username = 'atl@amp.org'
     password = ''
-    workspace_id = 67
+    workspace_id = 70
 
     login_to_backend(login_url, username, password, workspace_id)
 
