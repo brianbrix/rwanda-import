@@ -69,6 +69,7 @@ def get_data(excel_file: str, skip_rows: int, sheet_name: str):
     groups = []
     sectors = []
     file_categories = {amp_title: set() for amp_title in list(mapping_dict.keys())}
+    print("Number of rows in file: ",df2.size)
 
     # Go through each list element and its index
     for row in df2.to_numpy():
@@ -116,8 +117,8 @@ def get_data(excel_file: str, skip_rows: int, sheet_name: str):
     sectors = get_sectors()
     amp_role = get_amp_role()
     login()
-    for item in result:
-        print("Adding to api", item)
+    for idx,item in enumerate(result):
+        print("Adding to api: ",idx+1, item)
         # try:
         construct_object_and_import(item, categories, all_orgs, all_currencies, all_adj_types, sectors, amp_role[0])
         # except Exception as e:
