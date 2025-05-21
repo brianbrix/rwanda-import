@@ -115,7 +115,7 @@ def get_data(excel_file: str, skip_rows: int, sheet_name: str):
     all_adj_types = get_adjustment_types()
     sectors = get_sectors()
     amp_role = get_amp_role()
-    # login()
+    login()
     for item in result:
         print("Adding to api", item)
         # try:
