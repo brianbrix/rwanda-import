@@ -141,6 +141,11 @@ def insert_orgs(responsible_org_list:{}, implementing_org_list:{}):
                 );
             """
             cur.execute(group_query, (group, rwanda_gor_type, group,))
+            update_org_query="""
+            UPDATE amp_organisation SET org_grp_id = (SELECT amp_org_grp_id FROM amp_org_group WHERE org_grp_name = %s)
+            WHERE name = %s
+            """
+            cur.execute(update_org_query, (group, org, ))
             org_query="""
                INSERT INTO amp_organisation (amp_org_id, name, org_grp_id)
                 SELECT nextval('AMP_ORGANISATION_seq'), %s,
@@ -161,6 +166,11 @@ def insert_orgs(responsible_org_list:{}, implementing_org_list:{}):
                 );
             """
             cur.execute(group_query, (group, rwanda_gor_type, group,))
+            update_org_query =  """
+            UPDATE amp_organisation SET org_grp_id = (SELECT amp_org_grp_id FROM amp_org_group WHERE org_grp_name = %s)
+            WHERE name = %s
+            """
+            cur.execute(update_org_query, (group, org,))
             org_query="""
                INSERT INTO amp_organisation (amp_org_id, name, org_grp_id)
                 SELECT nextval('AMP_ORGANISATION_seq'), %s,
