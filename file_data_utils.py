@@ -92,7 +92,7 @@ def clean_up_sectors(data_list:[{}]):
             if not value or not isinstance(value, str):
                 data.pop(key, None)
                 continue
-            if "to be determined" == value.lower():
+            if "to be determined" == value.lower().strip():
                 data.pop(key, None)
                 continue
             if "null" == value.lower():
