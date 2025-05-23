@@ -126,7 +126,7 @@ def get_amp_role():
     return db_names
 
 def insert_orgs(responsible_org_list:{}, implementing_org_list:{}):
-    run_sql_file_postgres('insert_orgs.sql')
+    # run_sql_file_postgres('insert_orgs.sql')
     #insert responsible orgs
     conn = get_db_connection()
     rwanda_gor_type='Government of Rwanda(GoR)'
