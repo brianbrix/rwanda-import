@@ -132,8 +132,8 @@ def get_data(excel_file: str, skip_rows: int, sheet_name: str):
     # implementing_agency_and_types=get_implementing_org_list(result)
     # insert_orgs(responsible_orgs,implementing_agency_and_types)
     ####sectors
-    # print("Inserting sectors")
-    # add_sectors_to_db(secondary_sectors, primary_sectors)
+    print("Inserting sectors")
+    add_sectors_to_db(secondary_sectors, primary_sectors)
 
     ####categories
     # print("Inserting categories")
@@ -145,11 +145,11 @@ def get_data(excel_file: str, skip_rows: int, sheet_name: str):
     all_adj_types = get_adjustment_types()
     sectors = get_sectors()
     amp_role = get_amp_role()
-    login()
+    # login()
     for idx,item in enumerate(result):
         print("Adding to api: ",idx+1, item)
     #     # try:
-        construct_object_and_import(item, categories, all_orgs, all_currencies, all_adj_types, sectors, amp_role[0])
+        construct_object_and_import(item, categories, all_orgs, all_currencies, all_adj_types, sectors, amp_role[0], primary_sectors)
     #     # except Exception as e:
     #     #     print("Error adding to api:", e)
         #     break
@@ -168,7 +168,7 @@ def get_organization(all_orgs, key_name):
 
 
 def construct_object_and_import(original_object: {}, all_categories, all_organizations, all_currencies, all_adj_types,
-                                all_sectors, amp_role):
+                                all_sectors, amp_role, file_primary_sectors):
     # print(original_object)
     new_object = {}
     original_keys_list = list(original_object.keys())
@@ -219,9 +219,12 @@ def construct_object_and_import(original_object: {}, all_categories, all_organiz
 
         new_object["fundings"] = fundings
     if 'Secondary Sector' in original_keys_list:
+        sec = original_object['Secondary Sector']
+        if sec in file_primary_sectors:
+            sec = sec+'-2'
         new_object["secondary_sectors"] = [
             {
-                "sector": all_sectors[original_object['Secondary Sector']]
+                "sector": all_sectors[sec]
             }
         ]
     if 'Primary Sector' in original_keys_list:
@@ -230,9 +233,9 @@ def construct_object_and_import(original_object: {}, all_categories, all_organiz
                 "sector": all_sectors[original_object['Primary Sector']]
             }
         ]
-    # print(new_object)
+    print(new_object)
 
-    import_project(json.dumps(new_object))
+    # import_project(json.dumps(new_object))
     return new_object
 
 

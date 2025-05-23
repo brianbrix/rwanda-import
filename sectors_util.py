@@ -19,6 +19,8 @@ def get_sectors():
 
 def add_sectors_to_db(secondary_sector_names: [], primary_sectors:[]):
     run_sql_file_postgres('insert_sectors.sql')
+    secondary_sector_names = set(secondary_sector_names)
+    primary_sectors = set(primary_sectors)
     query = """
         INSERT INTO amp_sector (amp_sector_id, amp_sec_scheme_id, name)
         SELECT nextval('AMP_SECTOR_seq'), 
@@ -31,6 +33,8 @@ def add_sectors_to_db(secondary_sector_names: [], primary_sectors:[]):
     conn = get_db_connection()
     with conn.cursor(cursor_factory=RealDictCursor) as cur:
         for name in secondary_sector_names:
+            if name in primary_sectors:
+                name = name+"-2"
             cur.execute(query, ('NST',name, name))  # pass `name` twice for %s
         for name in primary_sectors:
             cur.execute(query, ('PS',name, name))  # pass `name` twice for %s
