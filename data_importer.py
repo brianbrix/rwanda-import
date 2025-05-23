@@ -145,7 +145,7 @@ def get_data(excel_file: str, skip_rows: int, sheet_name: str):
     all_adj_types = get_adjustment_types()
     sectors = get_sectors()
     amp_role = get_amp_role()
-    # login()
+    login()
     for idx,item in enumerate(result):
         print("Adding to api: ",idx+1, item)
     #     # try:
@@ -233,9 +233,9 @@ def construct_object_and_import(original_object: {}, all_categories, all_organiz
                 "sector": all_sectors[original_object['Primary Sector']]
             }
         ]
-    print(new_object)
+    # print(new_object)
 
-    # import_project(json.dumps(new_object))
+    import_project(json.dumps(new_object))
     return new_object
 
 
