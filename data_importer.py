@@ -8,8 +8,8 @@ from category_util import is_category, get_category_values, insert_categories, e
 from currency_utl import get_currencies
 from database_utils import run_sql_file_postgres
 from file_data_utils import clean_start_and_end_date, clean_up_title, extract_first_year_date, process_transaction, \
-    clean_up_orgs
-from organizations_util import get_organizations, get_amp_role
+    clean_up_orgs, clean_up_sectors, get_responsible_org_list, get_implementing_org_list
+from organizations_util import get_organizations, get_amp_role, insert_orgs
 from sectors_util import get_sectors, add_sectors_to_db
 
 mapping_file = 'CFIS MAPPING.xlsx'
@@ -68,10 +68,13 @@ def get_data(excel_file: str, skip_rows: int, sheet_name: str):
 
     agencies = []
     groups = []
-    sectors = []
+    secondary_sectors = []
+    primary_sectors = []
+
     file_categories = {amp_title: set() for amp_title in list(mapping_dict.keys())}
     data_dict_list=df2.to_numpy()
     print("Number of rows in file: ",len(data_dict_list))
+
 
     # Go through each list element and its index
     invalid_rows = 0
@@ -97,12 +100,16 @@ def get_data(excel_file: str, skip_rows: int, sheet_name: str):
                             row_result[amp_title] = col_value
                             if amp_title.lower() == 'implementing agency':
                                 agencies.append(col_value)
+                            if amp_title.lower() == 'responsible organisation':
+                                agencies.append(col_value)
                             if amp_title.lower() == 'donor agency type':
                                 groups.append(col_value)
                             if amp_title.lower() == 'donor agency':
                                 agencies.append(col_value)
                             if amp_title.lower() == 'secondary sector':
-                                sectors.append(col_value)
+                                secondary_sectors.append(col_value)
+                            if amp_title.lower() == 'primary sector':
+                                primary_sectors.append(col_value)
                             if is_category(amp_title):
                                 file_categories[amp_title].add(col_value)
         if row_result:  # Only add non-empty rows
@@ -110,15 +117,28 @@ def get_data(excel_file: str, skip_rows: int, sheet_name: str):
     print("Number of invalid rows: ", invalid_rows)
     print("Number of valid rows initially: ", len(result))
     clean_start_and_end_date(result)
+    clean_up_sectors(result)
+    print("Number of valid rows after title cleanup: ", len(result))
     result = clean_up_title(result)
     print("Number of valid rows after title cleanup: ", len(result))
     result = clean_up_orgs(result)
     print("Number of valid rows after orgs cleanup: ", len(result))
-    # print("categories", categories)
 
-    # run_sql_file_postgres('insert_orgs.sql')
-    # add_sectors_to_db(sectors)
-    # insert_categories(file_categories)
+    print("Trying to clean up db")
+    run_sql_file_postgres('delete_exisiting_records.sql')
+    ###### Orgs
+    print("Inserting organisations")
+    responsible_orgs=get_responsible_org_list(result)
+    implementing_agency_and_types=get_implementing_org_list(result)
+    # print("categories", categories)
+    insert_orgs(responsible_orgs,implementing_agency_and_types)
+    ####sectors
+    print("Inserting sectors")
+    add_sectors_to_db(secondary_sectors, primary_sectors)
+
+    ####categories
+    print("Inserting categories")
+    insert_categories(file_categories)
 
     all_orgs = get_organizations(agencies)
     categories = get_category_values(list(mapping_dict.keys()))
@@ -126,7 +146,7 @@ def get_data(excel_file: str, skip_rows: int, sheet_name: str):
     all_adj_types = get_adjustment_types()
     sectors = get_sectors()
     amp_role = get_amp_role()
-    # login()
+    login()
     for idx,item in enumerate(result):
         print("Adding to api: ",idx+1, item)
     #     # try:
@@ -154,7 +174,8 @@ def construct_object_and_import(original_object: {}, all_categories, all_organiz
     new_object = {}
     original_keys_list = list(original_object.keys())
     donors = get_organization(all_organizations, original_object['Donor Agency'])
-    implementers = get_organization(all_organizations, original_object['Implementing agency'])
+    implementers = get_organization(all_organizations, original_object['Implementing Agency'])
+    responsible_orgs = get_organization(all_organizations, original_object['Responsible Organization'])
     new_object["project_title"] = original_object['Project Title']
     new_object["is_draft"] = False
     new_object["activity_status"] = extract_category(all_categories, 'Activity status',
@@ -165,6 +186,7 @@ def construct_object_and_import(original_object: {}, all_categories, all_organiz
         new_object["actual_completion_date"] = original_object['Actual end date']
     new_object["donor_organization"] = donors
     new_object["implementing_agency"] = implementers
+    new_object["responsible_organization"] = responsible_orgs
     new_object["a_c_chapter"] = extract_category(all_categories, 'A.C. Chapter', original_object['A.C. Chapter'])
     if 'Procurement System' in original_keys_list:
         new_object["procurement_system"] = extract_category(all_categories, 'Procurement System',
@@ -197,15 +219,21 @@ def construct_object_and_import(original_object: {}, all_categories, all_organiz
         fundings.append(transaction_object)
 
         new_object["fundings"] = fundings
-    if 'Secondary sector' in original_keys_list:
+    if 'Secondary Sector' in original_keys_list:
         new_object["secondary_sectors"] = [
             {
-                "sector": all_sectors[original_object['Secondary sector']]
+                "sector": all_sectors[original_object['Secondary Sector']]
             }
         ]
-    print(new_object)
+    if 'Primary Sector' in original_keys_list:
+        new_object["primary_sectors"] = [
+            {
+                "sector": all_sectors[original_object['Primary Sector']]
+            }
+        ]
+    # print(new_object)
 
-    # import_project(json.dumps(new_object))
+    import_project(json.dumps(new_object))
     return new_object
 
 

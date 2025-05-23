@@ -17,12 +17,12 @@ def get_sectors():
             results[row['name']] = row['amp_sector_id']
     return results
 
-def add_sectors_to_db(sector_names: []):
+def add_sectors_to_db(secondary_sector_names: [], primary_sectors:[]):
     run_sql_file_postgres('insert_sectors.sql')
     query = """
         INSERT INTO amp_sector (amp_sector_id, amp_sec_scheme_id, name)
         SELECT nextval('AMP_SECTOR_seq'), 
-               (SELECT amp_sec_scheme_id FROM amp_sector_scheme WHERE sec_scheme_code = 'PBS' LIMIT 1),
+               (SELECT amp_sec_scheme_id FROM amp_sector_scheme WHERE sec_scheme_code = %s LIMIT 1),
                %s
         WHERE NOT EXISTS (
             SELECT 1 FROM amp_sector WHERE name = %s
@@ -30,7 +30,9 @@ def add_sectors_to_db(sector_names: []):
     """
     conn = get_db_connection()
     with conn.cursor(cursor_factory=RealDictCursor) as cur:
-        for name in sector_names:
-            cur.execute(query, (name, name))  # pass `name` twice for %s
+        for name in secondary_sector_names:
+            cur.execute(query, ('NST',name, name))  # pass `name` twice for %s
+        for name in primary_sectors:
+            cur.execute(query, ('PS',name, name))  # pass `name` twice for %s
         conn.commit()
     print("Added sectors to database")

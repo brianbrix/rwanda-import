@@ -40,13 +40,14 @@ def get_best_match(raw_name, db_names):
         db_name_without_bracket = extract_text_before_bracket(name)
         if raw_code is None:
             raw_code = ""
-        if raw_code.strip().lower()==code.strip().lower():
-            return db_id, name
-        if raw_name.strip().lower() == code.strip().lower():
-            return db_id, name
+        if code is not None:
+            if raw_code.strip().lower()==code.strip().lower():
+                return db_id, name
+            if raw_name.strip().lower() == code.strip().lower():
+                return db_id, name
+            if raw_name_without_bracket is not None and raw_name_without_bracket.strip().lower() == code.strip().lower():
+                return db_id, name
         if raw_name.strip().lower() == name.strip().lower():
-            return db_id, name
-        if raw_name_without_bracket is not None and raw_name_without_bracket.strip().lower() == code.strip().lower():
             return db_id, name
         if raw_name_without_bracket is not None and raw_name_without_bracket.strip().lower() == name.strip().lower():
             return db_id, name
@@ -124,26 +125,24 @@ def get_amp_role():
             db_names.append(row['amp_role_id'])
     return db_names
 
-def insert_orgs(responsible_org_list:[], implementing_org_list:{}):
+def insert_orgs(responsible_org_list:{}, implementing_org_list:{}):
     run_sql_file_postgres('insert_orgs.sql')
     #insert responsible orgs
     conn = get_db_connection()
+    rwanda_gor_type='Government of Rwanda(GoR)'
     with conn.cursor(cursor_factory=RealDictCursor) as cur:
-        for org in responsible_org_list:
-            cur.execute("""
-               INSERT INTO amp_organisation (amp_org_id, name, org_grp_id)
-                SELECT nextval('AMP_ORGANISATION_seq'), %s,
-                (SELECT amp_org_grp_id FROM amp_org_group WHERE org_grp_name = 'Government of Rwanda (GoR) & Ministries')
-                WHERE NOT EXISTS (
-                    SELECT 1 FROM amp_organisation
-                    WHERE name = %s
+        for org, group in responsible_org_list.items():
+            group_query="""
+            INSERT INTO amp_org_group (amp_org_grp_id, org_grp_name, org_type)
+            SELECT nextval('AMP_ORGANISATION_seq'),%s,(SELECT amp_org_type_id FROM amp_org_type WHERE org_type=%s)
+            WHERE NOT EXISTS (
+                    SELECT 1 FROM amp_org_group
+                    WHERE org_grp_name = %s
                 );
-            """, (org, org, ))
-            #todo implement insertiong of type/group depending on Juli's response
-        for key, value in implementing_org_list.items():
-           #insert org type/group
-            query = """
-                INSERT INTO amp_organisation (amp_org_id, name, org_grp_id)
+            """
+            cur.execute(group_query, (group, rwanda_gor_type, group,))
+            org_query="""
+               INSERT INTO amp_organisation (amp_org_id, name, org_grp_id)
                 SELECT nextval('AMP_ORGANISATION_seq'), %s,
                 (SELECT amp_org_grp_id FROM amp_org_group WHERE org_grp_name = %s)
                 WHERE NOT EXISTS (
@@ -151,5 +150,25 @@ def insert_orgs(responsible_org_list:[], implementing_org_list:{}):
                     WHERE name = %s
                 );
             """
-            cur.execute(query, (key, value, key))
+            cur.execute(org_query, (org, group,org ))
+        for org, group in implementing_org_list.items():
+            group_query="""
+            INSERT INTO amp_org_group (amp_org_grp_id, org_grp_name, org_type)
+            SELECT nextval('AMP_ORGANISATION_seq'),%s,(SELECT amp_org_type_id FROM amp_org_type WHERE org_type=%s)
+            WHERE NOT EXISTS (
+                    SELECT 1 FROM amp_org_group
+                    WHERE org_grp_name = %s
+                );
+            """
+            cur.execute(group_query, (group, rwanda_gor_type, group,))
+            org_query="""
+               INSERT INTO amp_organisation (amp_org_id, name, org_grp_id)
+                SELECT nextval('AMP_ORGANISATION_seq'), %s,
+                (SELECT amp_org_grp_id FROM amp_org_group WHERE org_grp_name = %s)
+                WHERE NOT EXISTS (
+                    SELECT 1 FROM amp_organisation
+                    WHERE name = %s
+                );
+            """
+            cur.execute(org_query, (org, group,org ))
         conn.commit()

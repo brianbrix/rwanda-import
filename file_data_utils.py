@@ -80,6 +80,49 @@ def clean_up_title(data_list:[{}]):
         cleaned_list.append(data)
     return cleaned_list
 
+def clean_up_sectors(data_list:[{}]):
+    """
+    Cleans up the 'sectors' field by removing Null and tobe determined
+    :param data_list: A list of dictionaries containing the data.
+    """
+    cleaned_list = []
+    for idx,data in enumerate(data_list):
+        for key in ['Primary Sector','Secondary Sector']:
+            value = data.get(key)
+            if not value or not isinstance(value, str):
+                data.pop(key, None)
+                continue
+            if "to be determined" == value.lower():
+                data.pop(key, None)
+                continue
+            if "null" == value.lower():
+                data.pop(key, None)
+                continue
+
+def get_implementing_org_list(data_list: [{}]):
+    """
+    Extracts unique implementing organizations from the data list.
+    """
+    implementing_orgs = {}
+    for data in data_list:
+        implementing_org = data.get('Implementing Agency')
+        implementing_org_type = data.get('Implementing Agency Type')
+        if implementing_org:
+           implementing_orgs[implementing_org]=implementing_org_type
+    return implementing_orgs
+
+def get_responsible_org_list(data_list: [{}]):
+    """
+    Extracts unique responsible organizations from the data list.
+    """
+    responsible_orgs = {}
+    for data in data_list:
+        responsible_org = data.get('Responsible Organization')
+        responsible_org_type = data.get('Responsible Organization Type')
+        if responsible_org:
+            responsible_orgs[responsible_org]=responsible_org_type
+    return responsible_orgs
+
 
 def extract_first_year_date(text: str):
     """

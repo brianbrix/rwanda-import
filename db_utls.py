@@ -9,11 +9,11 @@ def get_db_connection():
     global _connection
     if _connection is None or _connection.closed != 0:
         _connection = psycopg2.connect(
-            dbname=os.getenv("POSTGRES_DB", "rwanda"),
-            user=os.getenv("POSTGRES_USER", "amp"),
-            password=os.getenv("POSTGRES_PASSWORD", "amp"),
-            host=os.getenv("POSTGRES_HOST", "localhost"),  # since you're on the host
-            port=os.getenv("POSTGRES_PORT", 5433),
+            dbname=os.getenv("POSTGRES_DB", "amp"),
+            user=os.getenv("POSTGRES_USER", "postgres"),
+            password=os.getenv("POSTGRES_PASSWORD", "postgres"),
+            host=os.getenv("POSTGRES_HOST", "amp-rwanda-develop.stg.ampsite.net-db"),  # since you're on the host
+            port=os.getenv("POSTGRES_PORT", 5432),
             cursor_factory=RealDictCursor
         )
     return _connection
