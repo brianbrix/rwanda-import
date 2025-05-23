@@ -124,21 +124,21 @@ def get_data(excel_file: str, skip_rows: int, sheet_name: str):
     result = clean_up_orgs(result)
     print("Number of valid rows after orgs cleanup: ", len(result))
 
-    print("Trying to clean up db")
-    run_sql_file_postgres('delete_exisiting_records.sql')
+    # print("Trying to clean up db")
+    # run_sql_file_postgres('delete_exisiting_records.sql')
     ###### Orgs
-    print("Inserting organisations")
-    responsible_orgs=get_responsible_org_list(result)
-    implementing_agency_and_types=get_implementing_org_list(result)
+    # print("Inserting organisations")
+    # responsible_orgs=get_responsible_org_list(result)
+    # implementing_agency_and_types=get_implementing_org_list(result)
     # print("categories", categories)
-    insert_orgs(responsible_orgs,implementing_agency_and_types)
+    # insert_orgs(responsible_orgs,implementing_agency_and_types)
     ####sectors
-    print("Inserting sectors")
-    add_sectors_to_db(secondary_sectors, primary_sectors)
+    # print("Inserting sectors")
+    # add_sectors_to_db(secondary_sectors, primary_sectors)
 
     ####categories
-    print("Inserting categories")
-    insert_categories(file_categories)
+    # print("Inserting categories")
+    # insert_categories(file_categories)
 
     all_orgs = get_organizations(agencies)
     categories = get_category_values(list(mapping_dict.keys()))
