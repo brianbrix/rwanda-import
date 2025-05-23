@@ -2,6 +2,7 @@ DELETE from amp_sector_indicator;
 DELETE from amp_organisation_sector;
 DELETE from amp_activity_sector;
 DELETE from amp_sector CASCADE;
+DELETE FROM amp_sector_scheme;
 
 INSERT INTO amp_sector_scheme (amp_sec_scheme_id, sec_scheme_code, sec_scheme_name, show_in_rm)
 SELECT nextval('AMP_SECTOR_SCHEME_seq'), 'PBS', 'Public Sector', false

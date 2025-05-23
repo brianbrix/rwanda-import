@@ -63,6 +63,14 @@ def get_adjustment_types():
 def insert_categories(category_class_with_values: dict):
     conn = get_db_connection()
     with conn.cursor(cursor_factory=RealDictCursor) as cur:
+        delete_query = """
+                DELETE FROM amp_category_value
+                WHERE amp_category_class_id IN (
+                    SELECT id FROM amp_category_class 
+                    WHERE LOWER(category_name) NOT IN %s
+                );
+            """
+        cur.execute(delete_query, (tuple(key.lower() for key in category_class_with_values.keys()),))
         for category_class, values in category_class_with_values.items():
             # Get amp_category_class_id
             cur.execute("SELECT id FROM amp_category_class WHERE LOWER(category_name) = %s LIMIT 1", (category_class.lower(),))

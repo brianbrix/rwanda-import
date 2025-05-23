@@ -6,6 +6,7 @@ import re
 
 from psycopg2.extras import RealDictCursor
 
+from database_utils import run_sql_file_postgres
 from db_utls import get_db_connection
 
 
@@ -122,3 +123,33 @@ def get_amp_role():
         for row in rows:
             db_names.append(row['amp_role_id'])
     return db_names
+
+def insert_orgs(responsible_org_list:[], implementing_org_list:{}):
+    run_sql_file_postgres('insert_orgs.sql')
+    #insert responsible orgs
+    conn = get_db_connection()
+    with conn.cursor(cursor_factory=RealDictCursor) as cur:
+        for org in responsible_org_list:
+            cur.execute("""
+               INSERT INTO amp_organisation (amp_org_id, name, org_grp_id)
+                SELECT nextval('AMP_ORGANISATION_seq'), %s,
+                (SELECT amp_org_grp_id FROM amp_org_group WHERE org_grp_name = 'Government of Rwanda (GoR) & Ministries')
+                WHERE NOT EXISTS (
+                    SELECT 1 FROM amp_organisation
+                    WHERE name = %s
+                );
+            """, (org, org, ))
+            #todo implement insertiong of type/group depending on Juli's response
+        for key, value in implementing_org_list.items():
+           #insert org type/group
+            query = """
+                INSERT INTO amp_organisation (amp_org_id, name, org_grp_id)
+                SELECT nextval('AMP_ORGANISATION_seq'), %s,
+                (SELECT amp_org_grp_id FROM amp_org_group WHERE org_grp_name = %s)
+                WHERE NOT EXISTS (
+                    SELECT 1 FROM amp_organisation
+                    WHERE name = %s
+                );
+            """
+            cur.execute(query, (key, value, key))
+        conn.commit()

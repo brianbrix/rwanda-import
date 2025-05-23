@@ -116,9 +116,9 @@ def get_data(excel_file: str, skip_rows: int, sheet_name: str):
     print("Number of valid rows after orgs cleanup: ", len(result))
     # print("categories", categories)
 
-    run_sql_file_postgres('insert_orgs.sql')
-    add_sectors_to_db(sectors)
-    insert_categories(file_categories)
+    # run_sql_file_postgres('insert_orgs.sql')
+    # add_sectors_to_db(sectors)
+    # insert_categories(file_categories)
 
     all_orgs = get_organizations(agencies)
     categories = get_category_values(list(mapping_dict.keys()))
@@ -126,7 +126,7 @@ def get_data(excel_file: str, skip_rows: int, sheet_name: str):
     all_adj_types = get_adjustment_types()
     sectors = get_sectors()
     amp_role = get_amp_role()
-    login()
+    # login()
     for idx,item in enumerate(result):
         print("Adding to api: ",idx+1, item)
     #     # try:
@@ -164,7 +164,7 @@ def construct_object_and_import(original_object: {}, all_categories, all_organiz
     if 'Actual end date' in original_keys_list:
         new_object["actual_completion_date"] = original_object['Actual end date']
     new_object["donor_organization"] = donors
-    new_object["responsible_organization"] = implementers
+    new_object["implementing_agency"] = implementers
     new_object["a_c_chapter"] = extract_category(all_categories, 'A.C. Chapter', original_object['A.C. Chapter'])
     if 'Procurement System' in original_keys_list:
         new_object["procurement_system"] = extract_category(all_categories, 'Procurement System',
@@ -203,9 +203,9 @@ def construct_object_and_import(original_object: {}, all_categories, all_organiz
                 "sector": all_sectors[original_object['Secondary sector']]
             }
         ]
-    # print(new_object)
+    print(new_object)
 
-    import_project(json.dumps(new_object))
+    # import_project(json.dumps(new_object))
     return new_object
 
 
