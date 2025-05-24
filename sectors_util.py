@@ -14,7 +14,10 @@ def get_sectors():
         cur.execute("SELECT amp_sector_id, name FROM amp_sector")
         rows = cur.fetchall()
         for row in rows:
-            results[row['name']] = row['amp_sector_id']
+            results[row['name']] = {
+                'sector': row['amp_sector_id'],
+                'sector_percentage': 100.0
+            }
     return results
 
 def add_sectors_to_db(secondary_sector_names: [], primary_sectors:[]):

@@ -126,6 +126,7 @@ def get_amp_role():
     return db_names
 
 def insert_orgs(responsible_org_list:{}, implementing_org_list:{}):
+    ##most organizations are inserted using raws slq because of the cluttered column values... the only column with consistent values if the responsible organization
     run_sql_file_postgres('insert_orgs.sql')
     conn = get_db_connection()
     rwanda_gor_type='Government of Rwanda(GoR)'

@@ -221,15 +221,12 @@ def construct_object_and_import(original_object: {}, all_categories, all_organiz
         if sec in file_primary_sectors:
             sec = sec+'-2'
         new_object["secondary_sectors"] = [
-            {
-                "sector": all_sectors[sec]
-            }
+            all_sectors[sec]
+
         ]
     if 'Primary Sector' in original_keys_list:
         new_object["primary_sectors"] = [
-            {
-                "sector": all_sectors[original_object['Primary Sector']]
-            }
+             all_sectors[original_object['Primary Sector']]
         ]
     # print(new_object)
 
