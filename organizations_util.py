@@ -126,8 +126,7 @@ def get_amp_role():
     return db_names
 
 def insert_orgs(responsible_org_list:{}, implementing_org_list:{}):
-    # run_sql_file_postgres('insert_orgs.sql')
-    #insert responsible orgs
+    run_sql_file_postgres('insert_orgs.sql')
     conn = get_db_connection()
     rwanda_gor_type='Government of Rwanda(GoR)'
     with conn.cursor(cursor_factory=RealDictCursor) as cur:
@@ -156,6 +155,11 @@ def insert_orgs(responsible_org_list:{}, implementing_org_list:{}):
                 );
             """
             cur.execute(org_query, (org, group,org ))
+        conn.commit()
+    clean_implementing_orgs=get_organizations(list(implementing_org_list.keys()))
+    conn = get_db_connection()
+    with conn.cursor(cursor_factory=RealDictCursor) as cur:
+
         for org, group in implementing_org_list.items():
             group_query="""
             INSERT INTO amp_org_group (amp_org_grp_id, org_grp_name, org_type)
@@ -168,17 +172,12 @@ def insert_orgs(responsible_org_list:{}, implementing_org_list:{}):
             cur.execute(group_query, (group, rwanda_gor_type, group,))
             update_org_query =  """
             UPDATE amp_organisation SET org_grp_id = (SELECT amp_org_grp_id FROM amp_org_group WHERE org_grp_name = %s)
-            WHERE name = %s
+            WHERE amp_org_id = %s
             """
-            cur.execute(update_org_query, (group, org,))
-            org_query="""
-               INSERT INTO amp_organisation (amp_org_id, name, org_grp_id)
-                SELECT nextval('AMP_ORGANISATION_seq'), %s,
-                (SELECT amp_org_grp_id FROM amp_org_group WHERE org_grp_name = %s)
-                WHERE NOT EXISTS (
-                    SELECT 1 FROM amp_organisation
-                    WHERE name = %s
-                );
-            """
-            cur.execute(org_query, (org, group,org ))
+            if org in clean_implementing_orgs:
+                for match in clean_implementing_orgs[org]:
+                        cur.execute(update_org_query, (group, match['organization'], ))
+            else:
+                print("No match found for org: ", org)
+
         conn.commit()

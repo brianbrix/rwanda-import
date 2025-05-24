@@ -127,17 +127,17 @@ def get_data(excel_file: str, skip_rows: int, sheet_name: str):
     # print("Trying to clean up db")
     # run_sql_file_postgres('delete_exisiting_records.sql')
     ###### Orgs
-    # print("Inserting organisations")
+    print("Inserting organisations")
     responsible_orgs=get_responsible_org_list(result)
     implementing_agency_and_types=get_implementing_org_list(result)
     insert_orgs(responsible_orgs,implementing_agency_and_types)
     ####sectors
     print("Inserting sectors")
-    # add_sectors_to_db(secondary_sectors, primary_sectors)
+    add_sectors_to_db(secondary_sectors, primary_sectors)
 
     ####categories
-    # print("Inserting categories")
-    # insert_categories(file_categories)
+    print("Inserting categories")
+    insert_categories(file_categories)
 
     all_orgs = get_organizations(agencies)
     categories = get_category_values(list(mapping_dict.keys()))
@@ -145,13 +145,13 @@ def get_data(excel_file: str, skip_rows: int, sheet_name: str):
     all_adj_types = get_adjustment_types()
     sectors = get_sectors()
     amp_role = get_amp_role()
-    # login()
-    # for idx,item in enumerate(result):
-    #     print("Adding to api: ",idx+1, item)
-    #     # try:
-    #     construct_object_and_import(item, categories, all_orgs, all_currencies, all_adj_types, sectors, amp_role[0], primary_sectors)
-    #     # except Exception as e:
-    #     #     print("Error adding to api:", e)
+    login()
+    for idx,item in enumerate(result):
+        print("Adding to api: ",idx+1, item)
+        # try:
+        construct_object_and_import(item, categories, all_orgs, all_currencies, all_adj_types, sectors, amp_role[0], primary_sectors)
+        # except Exception as e:
+        #     print("Error adding to api:", e)
         #     break
 
 
@@ -197,8 +197,6 @@ def construct_object_and_import(original_object: {}, all_categories, all_organiz
     if 'Commitment' in original_keys_list or 'Disbursement' in original_keys_list:
         create_transaction('Commitment', commitments, original_object, all_currencies, all_adj_types)
         create_transaction('Disbursement', disbursements, original_object, all_currencies, all_adj_types)
-        # print("Commitments",commitments)
-        # print("Disbursements", disbursements)
         transaction_object={
             "donor_organization_id": new_object['donor_organization'][0]['organization'],
             "financing_instrument": extract_category(all_categories, 'Financing Instrument',
@@ -236,7 +234,6 @@ def construct_object_and_import(original_object: {}, all_categories, all_organiz
     # print(new_object)
 
     import_project(json.dumps(new_object))
-    return new_object
 
 
 def create_transaction(tran_type: str, lst: [], original_object=None, all_currencies=None, all_adj_types=None):
