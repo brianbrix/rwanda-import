@@ -74,6 +74,8 @@ services:
     restart: always
     depends_on:
       - airflow-postgres
+volumes:
+  postgres-db-volume: null
 
 networks:
   default: null
