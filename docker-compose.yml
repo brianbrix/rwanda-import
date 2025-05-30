@@ -23,9 +23,6 @@ services:
       - default
       - backend
       - nginxproxy
-    depends_on:
-      - redis
-      - postgres
 
   airflow-scheduler:
     image: ${AIRFLOW_IMAGE}
