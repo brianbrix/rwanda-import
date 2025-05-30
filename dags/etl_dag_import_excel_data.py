@@ -4,7 +4,7 @@ from airflow import DAG
 
 from datetime import datetime
 
-from airflow.providers.standard.operators.python import PythonOperator
+from airflow.operators.python import PythonOperator
 
 from dags.utils.api_util import login
 from dags.utils.data_importer import (
