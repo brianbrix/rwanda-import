@@ -2,7 +2,7 @@ import logging
 
 from psycopg2.extras import RealDictCursor
 
-from db_utls import get_db_connection
+from db_utils import get_db_connection
 
 
 

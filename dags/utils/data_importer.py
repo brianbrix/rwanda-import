@@ -7,11 +7,11 @@ import requests
 from numpy.ma.core import empty
 from pandas import DataFrame
 
-from dags.utils.category_util import is_category, get_category_values, get_adjustment_types, extract_category
-from dags.utils.currency_util import get_currencies
-from dags.utils.file_data_utils import process_transaction, clean_start_and_end_date, clean_up_sectors, clean_up_title, \
+from category_util import is_category, get_category_values, get_adjustment_types, extract_category
+from currency_util import get_currencies
+from file_data_utils import process_transaction, clean_start_and_end_date, clean_up_sectors, clean_up_title, \
     clean_up_orgs
-from dags.utils.organizations_util import get_organizations, get_amp_role
+from organizations_util import get_organizations, get_amp_role
 from sectors_util import get_sectors, add_sectors_to_db
 
 mapping_file = 'CFIS MAPPING.xlsx'

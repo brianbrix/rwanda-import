@@ -1,4 +1,4 @@
-# db_utls.py
+# db_utils.py
 import psycopg2
 from psycopg2.extras import RealDictCursor
 import os
