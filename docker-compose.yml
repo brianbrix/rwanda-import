@@ -30,6 +30,25 @@ services:
       - default
       - backend
       - nginxproxy
+    depends_on:
+      - airflow-postgres
+  airflow-postgres:
+    image: postgres:13-bullseye
+    environment:
+      POSTGRES_USER: airflow
+      POSTGRES_PASSWORD: airflow
+      POSTGRES_DB: airflow
+    volumes:
+      - postgres-db-volume:/var/lib/postgresql/data
+    healthcheck:
+      test:
+        - CMD
+        - pg_isready
+        - -U
+        - airflow
+      interval: 10s
+      retries: 5
+    restart: always
 
   airflow-scheduler:
     image: ${AIRFLOW_IMAGE}
@@ -47,18 +66,14 @@ services:
     networks:
       - default
       - backend
-    command: >
-      bash -c "
-        mkdir -p /opt/airflow/logs/{scheduler,webserver} &&
-        chown -R ${AIRFLOW_UID:-50000}:0 /opt/airflow/logs &&
-        airflow scheduler
-      "
     healthcheck:
       test: ["CMD", "curl", "--fail", "http://localhost:8974/health"]
       interval: 30s
       timeout: 10s
       retries: 5
     restart: always
+    depends_on:
+      - airflow-postgres
 
 networks:
   default: null

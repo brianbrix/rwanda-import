@@ -9,7 +9,7 @@ def get_db_connection():
     global _connection
     if _connection is None or _connection.closed != 0:
         _connection = psycopg2.connect(
-            dbname=os.getenv("POSTGRES_DB", os.getenv('AMP_DB')),
+            dbname=os.getenv("POSTGRES_DB", os.getenv('AMP_DB_NAME')),
             user=os.getenv("POSTGRES_USER", os.getenv('AMP_DB_USER')),
             password=os.getenv("POSTGRES_PASSWORD", os.getenv('AMP_DB_PASSWORD')),
             host=os.getenv("POSTGRES_HOST", os.getenv('AMP_DB_HOST')),  # since you're on the host
