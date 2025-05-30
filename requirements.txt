@@ -15,4 +15,4 @@ six
 tzdata
 urllib3
 apache-airflow
-apache-airflow-providers-google
+apache-airflow-providers-standard
