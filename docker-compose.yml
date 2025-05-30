@@ -1,17 +1,24 @@
----
 version: "3.3"
 services:
   airflow-common:
     image: ${AIRFLOW_IMAGE}
     env_file:
       - .env
+    environment:
+      - AIRFLOW__CORE__EXECUTOR=LocalExecutor
+      - AIRFLOW_UID=${AIRFLOW_UID:-50000}
     volumes:
       - ${AIRFLOW_PROJ_DIR:-.}/dags:/opt/airflow/dags
       - ${AIRFLOW_PROJ_DIR:-.}/logs:/opt/airflow/logs
       - ${AIRFLOW_PROJ_DIR:-.}/plugins:/opt/airflow/plugins
       - /opt/etl:/opt/etl:ro
-    user: ${AIRFLOW_UID:-50000}:0
-    command: webserver
+    user: "${AIRFLOW_UID:-50000}:0"
+    command: >
+      bash -c "
+        mkdir -p /opt/airflow/logs/{scheduler,webserver} &&
+        chown -R ${AIRFLOW_UID:-50000}:0 /opt/airflow/logs &&
+        airflow webserver
+      "
     ports:
       - "8080:8080"
     container_name: airlow
@@ -28,6 +35,9 @@ services:
     image: ${AIRFLOW_IMAGE}
     env_file:
       - .env
+    environment:
+      - AIRFLOW__CORE__EXECUTOR=LocalExecutor
+      - AIRFLOW_UID=${AIRFLOW_UID:-50000}
     volumes:
       - ${AIRFLOW_PROJ_DIR:-.}/dags:/opt/airflow/dags
       - ${AIRFLOW_PROJ_DIR:-.}/logs:/opt/airflow/logs
@@ -37,7 +47,12 @@ services:
     networks:
       - default
       - backend
-    command: scheduler
+    command: >
+      bash -c "
+        mkdir -p /opt/airflow/logs/{scheduler,webserver} &&
+        chown -R ${AIRFLOW_UID:-50000}:0 /opt/airflow/logs &&
+        airflow scheduler
+      "
     healthcheck:
       test: ["CMD", "curl", "--fail", "http://localhost:8974/health"]
       interval: 30s
