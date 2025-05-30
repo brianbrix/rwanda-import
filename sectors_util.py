@@ -42,4 +42,4 @@ def add_sectors_to_db(secondary_sector_names: [], primary_sectors:[]):
         for name in primary_sectors:
             cur.execute(query, ('PS',name, name))  # pass `name` twice for %s
         conn.commit()
-    print("Added sectors to database")
+    logging.info("Added sectors to database")

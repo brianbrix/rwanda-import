@@ -1,3 +1,4 @@
+import logging
 from http import HTTPStatus
 
 import requests
@@ -10,6 +11,7 @@ def login_to_backend(login_url, username, password, workspace_id):
     """
     Logs in to the backend and extracts the JSESSIONID cookie.
     """
+
     payload = {
         'username': username,
         'password': password,
@@ -20,22 +22,32 @@ def login_to_backend(login_url, username, password, workspace_id):
     response = session.post(login_url, json=payload)
 
     if response.status_code == 200:
-        print("Login successful.")
+        logging.info("Login successful.")
         auth_cookie = response.headers.get('Set-Cookie')
         return auth_cookie
     else:
         raise Exception(f"Login failed with status code {response.status_code}: {response.text}")
 
 
-def login():
+def login(kwargs):
     """
     Initializes the global auth_cookie.
     """
+    dag_run = kwargs.get('dag_run')
+    if dag_run:
+        config = dag_run.conf
+        print(f"DAG run config: {config}")
+    else:
+        print("No dag_run.conf available")
+    logging.info(f'The username {dag_run.conf["username"]}')
+    logging.info(f'The password {dag_run.conf["password"]}')
+    logging.info(f'The workspaceId {dag_run.conf["workspaceId"]}')
+    logging.info(f'The Url is {dag_run.conf["baseUrl"]}')
     global auth_cookie
-    login_url = 'https://amp-rwanda-pr-4394.stg.ampsite.net/rest/security/user'
-    username = 'atl@amp.org'
-    password = ''
-    workspace_id = 70
+    login_url = dag_run.conf["baseUrl"]+'/rest/security/user'
+    username =  dag_run.conf["username"]
+    password = dag_run.conf["password"]
+    workspace_id = dag_run.conf["workspaceId"]
 
     login_to_backend(login_url, username, password, workspace_id)
 
@@ -54,7 +66,7 @@ def post_with_cookie(post_url, data, headers=None):
             'Content-type': 'application/json',
             'Cookie': auth_cookie.split(';')[0]
         }
-        print("Headers", default_headers)
+        logging.info("Headers", default_headers)
 
         if headers:
             default_headers.update(headers)
@@ -72,7 +84,7 @@ def import_project(json_data):
     """
     Imports a project using the provided JSON data.
     """
-    print(json_data)
+    logging.info(json_data)
     post_url = 'https://amp-rwanda-pr-4394.stg.ampsite.net/rest/activity?can-downgrade-to-draft=true'
     response = post_with_cookie(post_url, json_data)
-    print(response)
+    logging.info(response)

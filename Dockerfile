@@ -1,12 +1,9 @@
-FROM python:3.9-alpine
+FROM apache/airflow:2.6.0
 
-WORKDIR /app
+COPY requirements.txt /
+USER airflow
+# Copy your DAGs into the DAGs directory
+#COPY dags /opt/airflow/dags
+RUN pip install --no-cache-dir --progress-bar off -r /requirements.txt
 
 
-# Install Python dependencies
-COPY requirements.txt .
-RUN pip install --no-cache-dir --progress-bar off -r requirements.txt
-
-COPY . .
-
-CMD ["python", "data_importer.py"]

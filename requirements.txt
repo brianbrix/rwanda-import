@@ -1,7 +1,6 @@
 certifi
 charset-normalizer
 et_xmlfile
-fuzzywuzzy
 idna
 Levenshtein
 numpy
@@ -11,8 +10,8 @@ psycopg2-binary
 python-dateutil
 python-dotenv
 pytz
-RapidFuzz
 requests
 six
 tzdata
 urllib3
+apache-airflow

@@ -1,3 +1,5 @@
+import logging
+
 from psycopg2.extras import RealDictCursor
 
 from db_utls import get_db_connection
@@ -18,10 +20,10 @@ def run_sql_file_postgres(sql_file_path):
         cur.execute(sql)
         conn.commit()
 
-        print("SQL executed successfully.")
+        logging.info("SQL executed successfully.")
         cur.close()
         conn.close()
     except Exception as e:
-        print(f"Error: {e}")
+        logging.info(f"Error: {e}")
 
 

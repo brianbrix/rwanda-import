@@ -179,6 +179,6 @@ def insert_orgs(responsible_org_list:{}, implementing_org_list:{}):
                 for match in clean_implementing_orgs[org]:
                         cur.execute(update_org_query, (group, match['organization'], ))
             else:
-                print("No match found for org: ", org)
+                logging.info("No match found for org: ", org)
 
         conn.commit()
