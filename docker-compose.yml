@@ -15,7 +15,9 @@ services:
     user: "${AIRFLOW_UID:-50000}:0"
     command: >
       bash -c "
-        mkdir -p /opt/airflow/logs/{scheduler,webserver}
+        mkdir -p /opt/airflow/logs/{scheduler,webserver} &&
+        chown -R ${AIRFLOW_UID:-50000}:0 /opt/airflow/logs &&
+        airflow webserver
       "
     ports:
       - "8080:8080"
@@ -61,6 +63,10 @@ services:
       - ${AIRFLOW_PROJ_DIR:-.}/plugins:/opt/airflow/plugins
       - /opt/etl:/opt/etl:ro
     user: "${AIRFLOW_UID:-50000}:0"
+    command: >
+      bash -c "
+        airflow scheduler
+      "
     networks:
       - default
       - backend
