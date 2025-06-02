@@ -3,7 +3,7 @@ from typing import Dict
 from psycopg2._psycopg import List
 from psycopg2.extras import RealDictCursor
 
-from db_utils import get_db_connection
+from .db_utils import get_db_connection
 
 
 def get_category_values(fields_list):

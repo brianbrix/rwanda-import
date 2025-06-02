@@ -1,6 +1,6 @@
 from psycopg2.extras import RealDictCursor
 
-from db_utils import get_db_connection
+from .db_utils import get_db_connection
 
 
 def get_currencies():

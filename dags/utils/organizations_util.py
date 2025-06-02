@@ -6,8 +6,8 @@ import re
 
 from psycopg2.extras import RealDictCursor
 
-from database_utils import run_sql_file_postgres
-from db_utils import get_db_connection
+from .database_utils import run_sql_file_postgres
+from .db_utils import get_db_connection
 
 
 
