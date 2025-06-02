@@ -11,6 +11,7 @@ services:
       - ${AIRFLOW_PROJ_DIR:-.}/dags:/opt/airflow/dags
       - ${AIRFLOW_PROJ_DIR:-.}/logs:/opt/airflow/logs
       - ${AIRFLOW_PROJ_DIR:-.}/plugins:/opt/airflow/plugins
+      - ./utils:/opt/airflow/utils
       - /opt/etl:/opt/etl:ro
     user: "${AIRFLOW_UID:-50000}:0"
     command: >
@@ -60,6 +61,7 @@ services:
     volumes:
       - ${AIRFLOW_PROJ_DIR:-.}/dags:/opt/airflow/dags
       - /var/logs/airflow:/opt/airflow/logs
+      - ./utils:/opt/airflow/utils
       - ${AIRFLOW_PROJ_DIR:-.}/plugins:/opt/airflow/plugins
       - /opt/etl:/opt/etl:ro
     user: "${AIRFLOW_UID:-50000}:0"
