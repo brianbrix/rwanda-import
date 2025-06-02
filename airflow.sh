@@ -9,7 +9,7 @@ export REDIS_HOST="${7:-localhost}"
 CREATE_NETWORK="${8:-true}"
 NETWORK_NAME="${9:-traefik_default}"
 BACKEND_NETWORK_NAME="${10:-backend}"
-export AIRFLOW_IMAGE=airflow:custom
+export AIRFLOW_IMAGE=apache/airflow:slim-latest
 export AIRFLOW_HOST=airflow.stg.ampsite.net
 
 echo "AIRFLOW_HOST is set to: $AIRFLOW_HOST"
