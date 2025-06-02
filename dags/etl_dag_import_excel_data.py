@@ -131,9 +131,9 @@ def import_data_task(processed_data):
         )
 
 @dag(default_args=default_args,
-     description='A DAG to process an excel file an create an activity in AMP',
-     dag_id='create_activity_dag_api',
-     tags=["create_activity_in_amp_api"],
+     description='A DAG to process an excel file an create/update an activity in AMP',
+     dag_id='import_activities_from_excel',
+     tags=["import_activities_from_excel"],
      schedule_interval=None,
      is_paused_upon_creation=False
      )
