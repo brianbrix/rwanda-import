@@ -1,5 +1,6 @@
 import logging
 from http import HTTPStatus
+from airflow.configuration import conf
 
 import requests
 
@@ -29,25 +30,21 @@ def login_to_backend(login_url, username, password, workspace_id):
         raise Exception(f"Login failed with status code {response.status_code}: {response.text}")
 
 
-def login(kwargs):
+def login():
     """
     Initializes the global auth_cookie.
     """
-    dag_run = kwargs.get('dag_run')
-    if dag_run:
-        config = dag_run.conf
-        print(f"DAG run config: {config}")
-    else:
-        print("No dag_run.conf available")
-    logging.info(f'The username {dag_run.conf["username"]}')
-    logging.info(f'The password {dag_run.conf["password"]}')
-    logging.info(f'The workspaceId {dag_run.conf["workspaceId"]}')
-    logging.info(f'The Url is {dag_run.conf["baseUrl"]}')
+
     global auth_cookie
-    login_url = dag_run.conf["baseUrl"]+'/rest/security/user'
-    username =  dag_run.conf["username"]
-    password = dag_run.conf["password"]
-    workspace_id = dag_run.conf["workspaceId"]
+    login_url = conf.get('api', 'baseUrl')+'/rest/security/user'
+    username =  conf.get('api', 'username')
+    password = conf.get('api','password')
+    workspace_id =conf.get('api', 'workspaceId')
+
+    logging.info("Login URL", login_url)
+    logging.info("Username", username)
+    logging.info("Password", password)
+    logging.info("Workspace ID", workspace_id)
 
     login_to_backend(login_url, username, password, workspace_id)
 
