@@ -1,10 +1,10 @@
 import sys
 sys.path.append('/opt/airflow/utils')
 import logging
-from datetime import datetime
+from datetime import datetime, timedelta
 
 from airflow import DAG
-from airflow.decorators import task
+from airflow.decorators import dag, task
 
 from utils.api_util import login
 from utils.data_importer import (
@@ -20,117 +20,124 @@ file_path = 'Rwanda_NDC.xlsx'
 sheet_name = 'Partnership Plan template'
 skip_rows = 1
 
+
 default_args = {
     'owner': 'airflow',
-    'start_date': datetime(2023, 1, 1),
+    'depends_on_past': False,
+    'start_date': datetime(2023, 4, 24),
+    'email_on_failure': False,
+    'email_on_retry': False,
     'retries': 1,
+    'retry_delay': timedelta(minutes=5),
 }
 
-with DAG(
-        'cfis_data_ingestion',
-        default_args=default_args,
-        schedule_interval=None,
-        catchup=False,
-        tags=['cfis']
-) as dag:
 
-    @task()
-    def read_data_task():
-        df1, df2 = read_data(file_path=file_path, skip_rows=skip_rows, sheet_name=sheet_name)
-        return {'df1': df1.to_json(), 'df2': df2.to_json()}
 
-    @task()
-    def load_mapping_task():
-        mapping = get_mapping(mapping_file, 1, 2, 4, 7, 6, 1)
-        return {'mapping_dict': mapping}
+@task()
+def read_data_task():
+    logging.info("Reading data from file: %s", file_path)
+    df1, df2 = read_data(file_path=file_path, skip_rows=skip_rows, sheet_name=sheet_name)
+    return {'df1': df1.to_json(), 'df2': df2.to_json()}
 
-    @task()
-    def process_rows_task(data_from_read, mapping_from_load):
-        import pandas as pd
-        import json
+@task()
+def load_mapping_task():
+    mapping = get_mapping(mapping_file, 1, 2, 4, 7, 6, 1)
+    return {'mapping_dict': mapping}
 
-        df1 = pd.read_json(data_from_read['df1'])
-        df2 = pd.read_json(data_from_read['df2'])
-        mapping_dict = mapping_from_load['mapping_dict']
+@task()
+def process_rows_task(data_from_read, mapping_from_load):
+    import pandas as pd
+    import json
 
-        columns = list(df1.columns)
-        data = df2.to_numpy()
+    df1 = pd.read_json(data_from_read['df1'])
+    df2 = pd.read_json(data_from_read['df2'])
+    mapping_dict = mapping_from_load['mapping_dict']
 
-        result = []
-        agencies, groups, secondary_sectors, primary_sectors = [], [], [], []
-        file_categories = {amp_title: set() for amp_title in list(mapping_dict.keys())}
-        invalid_rows = 0
+    columns = list(df1.columns)
+    data = df2.to_numpy()
 
-        for row in data:
-            row_result = {}
-            for idx, column in enumerate(columns):
-                for amp_title, ndc_title in mapping_dict.items():
-                    if amp_title is None or column is None or not isinstance(column, str):
-                        invalid_rows += 1
-                        continue
-                    if amp_title.lower() in ['commitment', 'disbursement']:
-                        process_transaction(amp_title, ndc_title, column, row, idx, df2, row_result)
-                        continue
-                    if ndc_title.lower() == column.lower():
-                        col_value = row[idx] if idx < len(row) else None
-                        if pd.notna(col_value):
-                            row_result[amp_title] = col_value
-                            if amp_title.lower() in ['implementing agency', 'responsible organisation', 'donor agency']:
-                                agencies.append(col_value)
-                            if amp_title.lower() == 'donor agency type':
-                                groups.append(col_value)
-                            if amp_title.lower() == 'secondary sector':
-                                secondary_sectors.append(col_value)
-                            if amp_title.lower() == 'primary sector':
-                                primary_sectors.append(col_value)
-                            if is_category(amp_title):
-                                file_categories[amp_title].add(col_value)
-            if row_result:
-                result.append(row_result)
+    result = []
+    agencies, groups, secondary_sectors, primary_sectors = [], [], [], []
+    file_categories = {amp_title: set() for amp_title in list(mapping_dict.keys())}
+    invalid_rows = 0
 
-        logging.info(f"Number of invalid rows: {invalid_rows}")
-        logging.info(f"Number of valid rows initially: {len(result)}")
-        clean_start_and_end_date(result)
-        clean_up_sectors(result)
-        logging.info(f"Number of valid rows after title cleanup: {len(result)}")
-        result = clean_up_title(result)
-        logging.info(f"Number of valid rows after title cleanup: {len(result)}")
-        result = clean_up_orgs(result)
-        logging.info(f"Number of valid rows after orgs cleanup: {len(result)}")
+    for row in data:
+        row_result = {}
+        for idx, column in enumerate(columns):
+            for amp_title, ndc_title in mapping_dict.items():
+                if amp_title is None or column is None or not isinstance(column, str):
+                    invalid_rows += 1
+                    continue
+                if amp_title.lower() in ['commitment', 'disbursement']:
+                    process_transaction(amp_title, ndc_title, column, row, idx, df2, row_result)
+                    continue
+                if ndc_title.lower() == column.lower():
+                    col_value = row[idx] if idx < len(row) else None
+                    if pd.notna(col_value):
+                        row_result[amp_title] = col_value
+                        if amp_title.lower() in ['implementing agency', 'responsible organisation', 'donor agency']:
+                            agencies.append(col_value)
+                        if amp_title.lower() == 'donor agency type':
+                            groups.append(col_value)
+                        if amp_title.lower() == 'secondary sector':
+                            secondary_sectors.append(col_value)
+                        if amp_title.lower() == 'primary sector':
+                            primary_sectors.append(col_value)
+                        if is_category(amp_title):
+                            file_categories[amp_title].add(col_value)
+        if row_result:
+            result.append(row_result)
 
-        return {
-            'result': result,
-            'agencies': agencies,
-            'file_categories': {k: list(v) for k, v in file_categories.items()},
-            'primary_sectors': primary_sectors,
-        }
+    logging.info(f"Number of invalid rows: {invalid_rows}")
+    logging.info(f"Number of valid rows initially: {len(result)}")
+    clean_start_and_end_date(result)
+    clean_up_sectors(result)
+    logging.info(f"Number of valid rows after title cleanup: {len(result)}")
+    result = clean_up_title(result)
+    logging.info(f"Number of valid rows after title cleanup: {len(result)}")
+    result = clean_up_orgs(result)
+    logging.info(f"Number of valid rows after orgs cleanup: {len(result)}")
 
-    @task()
-    def import_data_task(processed_data):
-        import json
+    return {
+        'result': result,
+        'agencies': agencies,
+        'file_categories': {k: list(v) for k, v in file_categories.items()},
+        'primary_sectors': primary_sectors,
+    }
 
-        # Since we're using @task, the input is already deserialized
-        result = processed_data['result']
-        agencies = processed_data['agencies']
-        file_categories = processed_data['file_categories']
-        primary_sectors = processed_data['primary_sectors']
+@task()
+def import_data_task(processed_data):
+    import json
 
-        all_orgs = get_organizations(agencies)
-        categories = get_category_values(list(file_categories.keys()))
-        all_currencies = get_currencies()
-        all_adj_types = get_adjustment_types()
-        sectors = get_sectors()
-        amp_role = get_amp_role()[0]
-        login()
+    # Since we're using @task, the input is already deserialized
+    result = processed_data['result']
+    agencies = processed_data['agencies']
+    file_categories = processed_data['file_categories']
+    primary_sectors = processed_data['primary_sectors']
 
-        for idx, item in enumerate(result):
-            logging.info(f"Importing record {idx + 1}/{len(result)}")
-            construct_object_and_import(
-                item, categories, all_orgs, all_currencies,
-                all_adj_types, sectors, amp_role, primary_sectors
-            )
+    all_orgs = get_organizations(agencies)
+    categories = get_category_values(list(file_categories.keys()))
+    all_currencies = get_currencies()
+    all_adj_types = get_adjustment_types()
+    sectors = get_sectors()
+    amp_role = get_amp_role()[0]
+    login()
 
-    # Define the workflow
+    for idx, item in enumerate(result):
+        logging.info(f"Importing record {idx + 1}/{len(result)}")
+        construct_object_and_import(
+            item, categories, all_orgs, all_currencies,
+            all_adj_types, sectors, amp_role, primary_sectors
+        )
+
+@dag(default_args=default_args,
+     description='A DAG to process an excel file an create an activity in AMP',
+     dag_id='create_activity_dag_api',
+     tags=["create_activity_in_amp_api"],
+     schedule_interval=None,
+     is_paused_upon_creation=False
+     )
+def import_from_excel():
     data = read_data_task()
     mapping = load_mapping_task()
     processed_data = process_rows_task(data, mapping)
