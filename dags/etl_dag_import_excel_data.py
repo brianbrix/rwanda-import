@@ -15,8 +15,8 @@ from utils.data_importer import (
 )
 
 # Constants
-mapping_file = 'CFIS MAPPING.xlsx'
-file_path = 'Rwanda_NDC.xlsx'
+mapping_file = '../utils/CFIS MAPPING.xlsx'
+data_file = '../utils/Rwanda_NDC.xlsx'
 sheet_name = 'Partnership Plan template'
 skip_rows = 1
 
@@ -35,8 +35,8 @@ default_args = {
 
 @task()
 def read_data_task():
-    logging.info("Reading data from file: %s", file_path)
-    df1, df2 = read_data(file_path=file_path, skip_rows=skip_rows, sheet_name=sheet_name)
+    logging.info("Reading data from file: %s", data_file)
+    df1, df2 = read_data(file_path=data_file, skip_rows=skip_rows, sheet_name=sheet_name)
     # Save to disk or tmp location
     df1_path = "/tmp/df1.parquet"
     df2_path = "/tmp/df2.parquet"
