@@ -37,7 +37,12 @@ default_args = {
 def read_data_task():
     logging.info("Reading data from file: %s", file_path)
     df1, df2 = read_data(file_path=file_path, skip_rows=skip_rows, sheet_name=sheet_name)
-    return {'df1': df1.to_json(), 'df2': df2.to_json()}
+    # Save to disk or tmp location
+    df1_path = "/tmp/df1.parquet"
+    df2_path = "/tmp/df2.parquet"
+    df1.to_parquet(df1_path)
+    df2.to_parquet(df2_path)
+    return {'df1_path': df1_path, 'df2_path': df2_path}
 
 @task()
 def load_mapping_task():
@@ -49,8 +54,8 @@ def process_rows_task(data_from_read, mapping_from_load):
     import pandas as pd
     import json
 
-    df1 = pd.read_json(data_from_read['df1'])
-    df2 = pd.read_json(data_from_read['df2'])
+    df1 = pd.read_parquet(data_from_read['df1_path'])
+    df2 = pd.read_parquet(data_from_read['df2_path'])
     mapping_dict = mapping_from_load['mapping_dict']
 
     columns = list(df1.columns)
