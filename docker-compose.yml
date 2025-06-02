@@ -15,9 +15,7 @@ services:
     user: "${AIRFLOW_UID:-50000}:0"
     command: >
       bash -c "
-        mkdir -p /opt/airflow/logs/{scheduler,webserver} &&
-        chown -R ${AIRFLOW_UID:-50000}:0 /opt/airflow/logs &&
-        airflow webserver
+        mkdir -p /opt/airflow/logs/{scheduler,webserver}
       "
     ports:
       - "8080:8080"
