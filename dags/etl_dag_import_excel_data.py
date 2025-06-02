@@ -142,3 +142,4 @@ def import_from_excel():
     mapping = load_mapping_task()
     processed_data = process_rows_task(data, mapping)
     import_data_task(processed_data)
+import_from_excel()
