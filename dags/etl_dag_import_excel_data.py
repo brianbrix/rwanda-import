@@ -1,5 +1,3 @@
-import sys
-sys.path.append('/opt/airflow/utils')
 import logging
 from datetime import datetime, timedelta
 
