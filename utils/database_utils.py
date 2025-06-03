@@ -27,17 +27,22 @@ def run_sql_file_postgres(sql_file_path):
         logging.info(f"Error: {e}")
 
 
-def existing_activity(title):
+def existing_activity(json_data):
     conn = get_db_connection()
     with conn.cursor(cursor_factory=RealDictCursor) as cur:
         cur.execute("""
-            SELECT av.amp_activity_id, ag.version
+            SELECT av.amp_activity_id,av.amp_id, ag.version
             FROM amp_activity_version av
             JOIN amp_activity_group ag ON av.amp_activity_group_id = ag.amp_activity_group_id
             WHERE av.name = %s
-        """, (title,))
+        """, (json_data['project_title'],))
         result = cur.fetchone()
         if result:
-            return result['amp_activity_id'], result['version'], title
+            json_data['internal_id']=result['amp_activity_id']
+            json_data['amp_id']=result['amp_id']
+            json_data['activity_group']={
+                'version':  result['version'],
+            }
+            return True
         else:
-            return None, None, None
+            return False

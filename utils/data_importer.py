@@ -336,18 +336,19 @@ def construct_object_and_import(original_object: {}, all_categories, all_organiz
              all_sectors[original_object['Primary Sector']]
         ]
     logging.info(new_object)
-    activity_id,version, title = existing_activity(new_object["project_title"])
-    import_project(new_object, activity_id,version, title)
+    is_existing = existing_activity(new_object)
+    import_project(new_object,is_existing)
 
 
 def create_transaction(tran_type: str, lst: [], original_object=None, all_currencies=None, all_adj_types=None):
     for item in original_object[tran_type]:
-        lst.append({
-            "transaction_amount": item['amount'],
-            "currency": all_currencies[item['currency']],
-            "adjustment_type": all_adj_types[item['adj_type']],
-            "transaction_date": item['date']
-        })
+        if len(item['amount'])>0 or int(item['amount'])==0:
+            lst.append({
+                "transaction_amount": item['amount'],
+                "currency": all_currencies[item['currency']],
+                "adjustment_type": all_adj_types[item['adj_type']],
+                "transaction_date": item['date']
+            })
 
 
 if __name__ == "__main__":
