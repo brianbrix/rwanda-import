@@ -39,7 +39,7 @@ def login():
     login_url = conf.get('api', 'baseurl')+'/rest/security/user'
     username =  conf.get('api', 'username')
     password = conf.get('api','password')
-    workspace_id =conf.get('api', 'workspaceId')
+    workspace_id =int(conf.get('api', 'workspaceid'))
 
     logging.info("Login URL", login_url)
     logging.info("Username", username)
