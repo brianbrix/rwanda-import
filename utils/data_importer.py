@@ -46,10 +46,16 @@ def read_data(file_path: str, skip_rows: int = 0, sheet_name: str = None,
         # Excel file
         if sheet_name:
             df1 = pd.read_excel(file_path, skiprows=skip_rows, sheet_name=sheet_name, nrows=1)#column row
+            df1.columns = df1.columns.map(str)
+
             df2 = pd.read_excel(file_path, skiprows=skip_rows + 1, sheet_name=sheet_name)#first data row
         else:
             df1 = pd.read_excel(file_path, skiprows=skip_rows, nrows=1)
+            df1.columns = df1.columns.map(str)
+
             df2 = pd.read_excel(file_path, skiprows=skip_rows + 1)
+        df2.columns = df1.columns
+        df2.columns = df2.columns.map(str)
         return df1, df2
     elif file_path.endswith('.json'):
         # JSON file
