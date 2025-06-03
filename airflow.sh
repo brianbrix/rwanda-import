@@ -1,14 +1,13 @@
 #!/bin/bash
-export AMP_API_HOST="${1:-http://172.17.0.1:8082}"
-export AMP_DB_HOST="${2:-172.17.0.1}"
-export AMP_DB_NAME="${3:-amp}"
-export AMP_DB_USER="${4:-postgres}"
-export AMP_DB_PASSWORD="${5:-postgres}"
-export AMP_DB_PORT="${6:-5432}"
-export REDIS_HOST="${7:-localhost}"
-CREATE_NETWORK="${8:-true}"
-NETWORK_NAME="${9:-traefik_default}"
-BACKEND_NETWORK_NAME="${10:-backend}"
+export AMP_DB_HOST="${1:-172.17.0.1}"
+export AMP_DB_NAME="${2:-amp}"
+export AMP_DB_USER="${3:-postgres}"
+export AMP_DB_PASSWORD="${4:-postgres}"
+export AMP_DB_PORT="${5:-5432}"
+export REDIS_HOST="${6:-localhost}"
+CREATE_NETWORK="${7:-true}"
+NETWORK_NAME="${8:-traefik_default}"
+BACKEND_NETWORK_NAME="${9:-backend}"
 export AIRFLOW_IMAGE=airflow:custom
 export AIRFLOW_HOST=airflow.stg.ampsite.net
 

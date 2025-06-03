@@ -36,7 +36,7 @@ def login():
     """
 
     global auth_cookie
-    login_url = conf.get('api', 'baseUrl')+'/rest/security/user'
+    login_url = conf.get('api', 'baseurl')+'/rest/security/user'
     username =  conf.get('api', 'username')
     password = conf.get('api','password')
     workspace_id =conf.get('api', 'workspaceId')
@@ -82,6 +82,6 @@ def import_project(json_data):
     Imports a project using the provided JSON data.
     """
     logging.info(json_data)
-    post_url = 'https://amp-rwanda-pr-4394.stg.ampsite.net/rest/activity?can-downgrade-to-draft=true'
+    post_url = conf.get('api', 'baseurl')+'/rest/activity?can-downgrade-to-draft=true'
     response = post_with_cookie(post_url, json_data)
     logging.info(response)
