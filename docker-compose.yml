@@ -60,7 +60,7 @@ services:
       - ${AIRFLOW_PROJ_DIR:-.}/utils:/opt/airflow/utils
       - /opt/etl:/opt/etl:ro
     user: "${AIRFLOW_UID:-50000}:0"
-    command: schedular
+    command: scheduler
     networks:
       - default
       - backend
