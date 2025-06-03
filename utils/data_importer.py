@@ -337,7 +337,7 @@ def construct_object_and_import(original_object: {}, all_categories, all_organiz
         ]
     logging.info(new_object)
     activity_id, title = existing_activity(new_object["project_title"])
-    import_project(json.dumps(new_object), activity_id, title)
+    import_project(new_object, activity_id, title)
 
 
 def create_transaction(tran_type: str, lst: [], original_object=None, all_currencies=None, all_adj_types=None):

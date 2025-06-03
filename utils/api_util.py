@@ -1,3 +1,4 @@
+import json
 import logging
 from http import HTTPStatus
 from numbers import Number
@@ -87,6 +88,7 @@ def import_project(json_data, id: Number, project_title:str):
     post_url = conf.get('api', 'baseurl')+'/rest/activity?can-downgrade-to-draft=true'
     if id is not None and project_title is not None:
         logging.info("Updating project with id: %s and title %s", id, project_title)
+        json_data['internal_id']=id
         post_url = conf.get('api', 'baseurl')+'/rest/activity/'+str(id)+'?can-downgrade-to-draft=true'
-    response = post_with_cookie(post_url, json_data)
+    response = post_with_cookie(post_url, json.dumps(json_data))
     logging.info(response)
