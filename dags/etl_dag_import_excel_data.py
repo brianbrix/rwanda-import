@@ -1,8 +1,14 @@
 import logging
 import os
 import sys
-
 sys.path.append('/opt/airflow')
+
+from utils.category_util import insert_categories
+from utils.database_utils import run_sql_file_postgres
+from utils.file_data_utils import get_responsible_org_list, get_implementing_org_list
+from utils.organizations_util import insert_orgs
+from utils.sectors_util import add_sectors_to_db
+
 
 from datetime import datetime, timedelta
 
@@ -110,6 +116,21 @@ def process_rows_task(data_from_read, mapping_from_load):
     logging.info(f"Number of valid rows after title cleanup: {len(result)}")
     result = clean_up_orgs(result)
     logging.info(f"Number of valid rows after orgs cleanup: {len(result)}")
+
+    # logging.info("Trying to clean up db")
+    # run_sql_file_postgres('delete_exisiting_records.sql')
+    # ##### Orgs
+    # logging.info("Inserting organisations")
+    # responsible_orgs=get_responsible_org_list(result)
+    # implementing_agency_and_types=get_implementing_org_list(result)
+    # insert_orgs(responsible_orgs,implementing_agency_and_types)
+    # ###sectors
+    # logging.info("Inserting sectors")
+    # add_sectors_to_db(secondary_sectors, primary_sectors)
+    #
+    # ###categories
+    # logging.info("Inserting categories")
+    # insert_categories(file_categories)
 
     return {
         'result': result,

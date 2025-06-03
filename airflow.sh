@@ -1,24 +1,11 @@
 #!/bin/bash
-export AMP_DB_HOST="${1:-172.17.0.1}"
-export AMP_DB_NAME="${2:-amp}"
-export AMP_DB_USER="${3:-postgres}"
-export AMP_DB_PASSWORD="${4:-postgres}"
-export AMP_DB_PORT="${5:-5432}"
-export REDIS_HOST="${6:-localhost}"
-CREATE_NETWORK="${7:-true}"
-NETWORK_NAME="${8:-traefik_default}"
-BACKEND_NETWORK_NAME="${9:-backend}"
+CREATE_NETWORK="${1:-true}"
+NETWORK_NAME="${2:-traefik_default}"
+BACKEND_NETWORK_NAME="${3:-backend}"
 export AIRFLOW_IMAGE=airflow:custom
 export AIRFLOW_HOST=airflow.stg.ampsite.net
 
-echo "AIRFLOW_HOST is set to: $AIRFLOW_HOST"
-echo "AIRFLOW_IMAGE is set to: $AIRFLOW_IMAGE"
-echo "AMP_API_HOST  is set to: $AMP_API_HOST"
-echo "AMP_DB_HOST  is set to: $AMP_DB_HOST"
-echo "AMP_DB_NAME  is set to: $AMP_DB_NAME"
-echo "AMP_DB_USER  is set to: $AMP_DB_USER"
-echo "AMP_DB_PASSWORD  is set to: $AMP_DB_PASSWORD"
-echo "AMP_DB_PORT  is set to: $AMP_DB_PORT"
+
 echo "REDIS_HOST  is set to: $REDIS_HOST"
 echo "CREATE_NETWORK  is set to: $CREATE_NETWORK"
 

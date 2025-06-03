@@ -7,6 +7,8 @@ import requests
 from numpy.ma.core import empty
 from pandas import DataFrame
 
+from utils.api_util import import_project
+from utils.database_utils import existing_activity
 from .category_util import is_category, get_category_values, get_adjustment_types, extract_category
 from .currency_util import get_currencies
 from .file_data_utils import process_transaction, clean_start_and_end_date, clean_up_sectors, clean_up_title, \
@@ -334,8 +336,8 @@ def construct_object_and_import(original_object: {}, all_categories, all_organiz
              all_sectors[original_object['Primary Sector']]
         ]
     logging.info(new_object)
-
-    # import_project(json.dumps(new_object))
+    activity_id = existing_activity(new_object["project_title"])
+    import_project(json.dumps(new_object), activity_id)
 
 
 def create_transaction(tran_type: str, lst: [], original_object=None, all_currencies=None, all_adj_types=None):

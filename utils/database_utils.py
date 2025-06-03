@@ -27,3 +27,9 @@ def run_sql_file_postgres(sql_file_path):
         logging.info(f"Error: {e}")
 
 
+def existing_activity(title):
+    conn = get_db_connection()
+    with conn.cursor(cursor_factory=RealDictCursor) as cur:
+        cur.execute("SELECT amp_activity_id FROM amp_activity_version WHERE name = %s", (title,))
+        result = cur.fetchone()
+        return result['amp_activity_id'] if result else None

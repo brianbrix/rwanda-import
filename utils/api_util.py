@@ -1,5 +1,7 @@
 import logging
 from http import HTTPStatus
+from numbers import Number
+
 from airflow.configuration import conf
 
 import requests
@@ -77,11 +79,13 @@ def post_with_cookie(post_url, data, headers=None):
             raise Exception(f"POST request failed: {response.status_code} - {response.text}")
 
 
-def import_project(json_data):
+def import_project(json_data, id: Number):
     """
     Imports a project using the provided JSON data.
     """
     logging.info(json_data)
     post_url = conf.get('api', 'baseurl')+'/rest/activity?can-downgrade-to-draft=true'
+    if id is not None:
+        post_url = conf.get('api', 'baseurl')+'/rest/activity/'+str(id)+'?can-downgrade-to-draft=true'
     response = post_with_cookie(post_url, json_data)
     logging.info(response)

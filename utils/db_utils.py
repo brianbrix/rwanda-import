@@ -2,6 +2,7 @@
 import psycopg2
 from psycopg2.extras import RealDictCursor
 import os
+from airflow.configuration import conf
 
 _connection = None
 
@@ -9,10 +10,10 @@ def get_db_connection():
     global _connection
     if _connection is None or _connection.closed != 0:
         _connection = psycopg2.connect(
-            dbname=os.getenv('AMP_DB_NAME'),
-            user=os.getenv('AMP_DB_USER'),
-            password=os.getenv('AMP_DB_PASSWORD'),
-            host=os.getenv('AMP_DB_HOST'),  # since you're on the host
-            port=os.getenv('AMP_DB_PORT')
+            dbname=conf.get('database','database_name'),
+            user=conf.get('database', 'username'),
+            password=conf.get('database', 'password'),
+            host=conf.get('database','database_host'),
+            port=conf.get('database', 'port')
         )
     return _connection
