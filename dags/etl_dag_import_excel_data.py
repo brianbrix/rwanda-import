@@ -43,6 +43,7 @@ default_args = {
 def read_data_task():
     logging.info("Reading data from file: %s", data_file)
     df1, df2 = read_data(file_path=data_file, skip_rows=skip_rows, sheet_name=sheet_name)
+    df2 = df2.fillna("").astype(str)
     # Save to disk or tmp location
     df1_path = "/tmp/df1.parquet"
     df2_path = "/tmp/df2.parquet"
