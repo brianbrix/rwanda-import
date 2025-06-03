@@ -86,6 +86,7 @@ def import_project(json_data, id: Number):
     logging.info(json_data)
     post_url = conf.get('api', 'baseurl')+'/rest/activity?can-downgrade-to-draft=true'
     if id is not None:
+        logging.info("Updating project with id: %s and title", id, json_data['project_title'])
         post_url = conf.get('api', 'baseurl')+'/rest/activity/'+str(id)+'?can-downgrade-to-draft=true'
     response = post_with_cookie(post_url, json_data)
     logging.info(response)

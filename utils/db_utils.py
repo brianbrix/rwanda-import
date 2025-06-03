@@ -14,6 +14,6 @@ def get_db_connection():
             user=conf.get('database', 'username'),
             password=conf.get('database', 'password'),
             host=conf.get('database','database_host'),
-            port=conf.get('database', 'port')
+            port=conf.get('database', 'database_port')
         )
     return _connection
