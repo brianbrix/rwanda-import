@@ -1,4 +1,5 @@
 import logging
+import os
 import sys
 
 sys.path.append('/opt/airflow')
@@ -17,8 +18,11 @@ from utils.data_importer import (
 )
 
 # Constants
-mapping_file = '../utils/CFIS MAPPING.xlsx'
-data_file = '../utils/Rwanda_NDC.xlsx'
+dag_dir = os.path.dirname(os.path.abspath(__file__))
+file_path = os.path.join(dag_dir, '..', 'utils', 'Rwanda_NDC.xlsx')
+file_path2 = os.path.join(dag_dir, '..', 'utils', 'CFIS MAPPING.xlsx')
+data_file = os.path.abspath(file_path)
+mapping_file = os.path.abspath(file_path2)
 sheet_name = 'Partnership Plan template'
 skip_rows = 1
 
