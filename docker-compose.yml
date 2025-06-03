@@ -14,15 +14,10 @@ services:
       - ./utils:/opt/airflow/utils
       - /opt/etl:/opt/etl:ro
     user: "${AIRFLOW_UID:-50000}:0"
-    command: >
-      bash -c "
-        mkdir -p /opt/airflow/logs/{scheduler,webserver} &&
-        chown -R ${AIRFLOW_UID:-50000}:0 /opt/airflow/logs &&
-        airflow webserver
-      "
+    command: webserver
     ports:
       - "8080:8080"
-    container_name: airflow
+    container_name: dg-airflow
     labels:
       - "traefik.frontend.rule=Host:${AIRFLOW_HOST}"
       - "traefik.port=8080"
@@ -60,15 +55,11 @@ services:
       - AIRFLOW_UID=${AIRFLOW_UID:-50000}
     volumes:
       - ${AIRFLOW_PROJ_DIR:-.}/dags:/opt/airflow/dags
-      - /var/logs/airflow:/opt/airflow/logs
-      - ./utils:/opt/airflow/utils
+      - ${AIRFLOW_PROJ_DIR:-.}/logs:/opt/airflow/logs
       - ${AIRFLOW_PROJ_DIR:-.}/plugins:/opt/airflow/plugins
       - /opt/etl:/opt/etl:ro
     user: "${AIRFLOW_UID:-50000}:0"
-    command: >
-      bash -c "
-        airflow scheduler
-      "
+    command: schedular
     networks:
       - default
       - backend

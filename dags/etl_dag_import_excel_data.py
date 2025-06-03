@@ -31,7 +31,7 @@ default_args = {
 
 
 
-@task()
+@task
 def read_data_task():
     logging.info("Reading data from file: %s", data_file)
     df1, df2 = read_data(file_path=data_file, skip_rows=skip_rows, sheet_name=sheet_name)
@@ -42,12 +42,13 @@ def read_data_task():
     df2.to_parquet(df2_path)
     return {'df1_path': df1_path, 'df2_path': df2_path}
 
-@task()
+@task
 def load_mapping_task():
+    logging.info("Loading mapping from file %s", mapping_file)
     mapping = get_mapping(mapping_file, 1, 2, 4, 7, 6, 1)
     return {'mapping_dict': mapping}
 
-@task()
+@task
 def process_rows_task(data_from_read, mapping_from_load):
     import pandas as pd
     import json
@@ -108,7 +109,7 @@ def process_rows_task(data_from_read, mapping_from_load):
         'primary_sectors': primary_sectors,
     }
 
-@task()
+@task
 def import_data_task(processed_data):
     import json
 
