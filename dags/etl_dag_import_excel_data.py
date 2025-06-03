@@ -1,11 +1,15 @@
 import logging
+import sys
+
+sys.path.append('/opt/airflow')
+
 from datetime import datetime, timedelta
 
 from airflow import DAG
 from airflow.decorators import dag, task
 
-from ..utils.api_util import login
-from ..utils.data_importer import (
+from utils.api_util import login
+from utils.data_importer import (
     read_data, get_mapping, clean_start_and_end_date, clean_up_sectors,
     clean_up_title, clean_up_orgs, get_organizations, get_category_values,
     get_currencies, get_adjustment_types, get_sectors, get_amp_role,
