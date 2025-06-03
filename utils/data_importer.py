@@ -342,7 +342,7 @@ def construct_object_and_import(original_object: {}, all_categories, all_organiz
 
 def create_transaction(tran_type: str, lst: [], original_object=None, all_currencies=None, all_adj_types=None):
     for item in original_object[tran_type]:
-        if len(item['amount'])<=0 or int(item['amount'])==0:
+        if len(item['amount'])<=0 or float(item['amount'])==0:
             continue
         lst.append({
             "transaction_amount": item['amount'],
