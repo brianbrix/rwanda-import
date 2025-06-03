@@ -79,14 +79,14 @@ def post_with_cookie(post_url, data, headers=None):
             raise Exception(f"POST request failed: {response.status_code} - {response.text}")
 
 
-def import_project(json_data, id: Number):
+def import_project(json_data, id: Number, project_title:str):
     """
     Imports a project using the provided JSON data.
     """
     logging.info(json_data)
     post_url = conf.get('api', 'baseurl')+'/rest/activity?can-downgrade-to-draft=true'
-    if id is not None:
-        logging.info("Updating project with id: %s and title %s", id, json_data['project_title'])
+    if id is not None and project_title is not None:
+        logging.info("Updating project with id: %s and title %s", id, project_title)
         post_url = conf.get('api', 'baseurl')+'/rest/activity/'+str(id)+'?can-downgrade-to-draft=true'
     response = post_with_cookie(post_url, json_data)
     logging.info(response)

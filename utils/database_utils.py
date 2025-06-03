@@ -32,4 +32,4 @@ def existing_activity(title):
     with conn.cursor(cursor_factory=RealDictCursor) as cur:
         cur.execute("SELECT amp_activity_id FROM amp_activity_version WHERE name = %s", (title,))
         result = cur.fetchone()
-        return result['amp_activity_id'] if result else None
+        return result['amp_activity_id'], title if result else None, None
